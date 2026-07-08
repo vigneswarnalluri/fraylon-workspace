@@ -78,7 +78,6 @@ final _routerNotifierProvider = ChangeNotifierProvider<_RouterNotifier>(
 );
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
   final notifier = ref.watch(_routerNotifierProvider);
 
   return GoRouter(
@@ -222,7 +221,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     redirect: (context, state) {
-      final isLoggedIn = authState.valueOrNull != null;
+      final isLoggedIn = ref.read(authStateProvider).valueOrNull != null;
       final location = state.matchedLocation;
 
       // Splash is always allowed
