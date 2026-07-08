@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
   <!-- SEO -->
-  <title>Privacy Policy — Fraylon Workspace | Fraylon Technologies LLP</title>
-  <meta name="description" content="Privacy Policy for Fraylon Workspace, an enterprise collaboration platform developed by Fraylon Technologies LLP. Learn how we collect, use, and protect your data." />
-  <meta name="keywords" content="Fraylon Workspace, Privacy Policy, Fraylon Technologies, enterprise app, data privacy" />
+  <title>Privacy Policy — Fraylon Workspace | Fraylon Technologies</title>
+  <meta name="description" content="Privacy Policy for Fraylon Workspace, an enterprise collaboration platform developed by Fraylon Technologies LLP. Learn how we collect, use, and protect your data under GDPR and Google Play policies." />
+  <meta name="keywords" content="Fraylon Workspace, Privacy Policy, Fraylon Technologies, GDPR, Data Safety, enterprise collaboration" />
   <meta name="author" content="Fraylon Technologies LLP" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://fraylontech.com/privacy-policy" />
@@ -17,8 +17,9 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://fraylontech.com/privacy-policy" />
   <meta property="og:title" content="Privacy Policy — Fraylon Workspace" />
-  <meta property="og:description" content="Fraylon Workspace Privacy Policy by Fraylon Technologies LLP. Learn how we handle your data." />
+  <meta property="og:description" content="Official Fraylon Workspace Privacy Policy by Fraylon Technologies LLP. Fully compliant with Google Play Data Safety and GDPR." />
   <meta property="og:site_name" content="Fraylon Technologies LLP" />
+  <meta property="og:image" content="https://fraylontech.com/logo.png" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
@@ -28,609 +29,897 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* ── DESIGN SYSTEM VARIABLES ── */
     :root {
-      --blue:      #2563EB;
-      --cyan:      #06B6D4;
-      --gradient:  linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
-      --text:      #111827;
-      --muted:     #6B7280;
-      --border:    #E5E7EB;
-      --bg-card:   #F9FAFB;
-      --radius:    14px;
-      --shadow:    0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(37,99,235,.06);
+      --color-primary: #00BFB3;       /* Teal / Cyan */
+      --color-primary-dark: #009E95;  /* Hover Teal */
+      --color-secondary: #1B2B44;     /* Brand Navy Blue */
+      --bg-body: #FFFFFF;
+      --bg-surface: #F8FAFC;          /* Slate Tint */
+      --bg-dark-surface: #F1F5F9;     /* Light Grey-Slate (Footer) */
+      --text-main: #0F172A;           /* Dark Slate */
+      --text-secondary: #475569;      /* Slate Grey */
+      --text-muted: #94A3B8;          /* Light Grey */
+      --border-color: rgba(15, 23, 42, .08);
+      --nav-height: 90px;
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    html { scroll-behavior: smooth; }
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #ffffff;
-      color: var(--text);
-      line-height: 1.7;
+      font-family: var(--font-family);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.8;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── HEADER ─────────────────────────────────────────── */
-    header {
-      background: var(--gradient);
+    /* ── SKIP LINK ── */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--color-primary);
       color: #fff;
-      padding: 64px 24px 56px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      z-index: 1000;
+      transition: top 0.2s;
     }
-    header::before {
+    .skip-link:focus {
+      top: 0;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background-color: var(--bg-body);
+      border-bottom: 1px solid var(--border-color);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--color-secondary);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-logo {
+      height: 48px;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-link {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      position: relative;
+      padding: 8px 0;
+      transition: color 0.2s;
+    }
+    .nav-link:hover {
+      color: var(--color-primary);
+    }
+    .nav-link::after {
       content: '';
       position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at 70% 50%, rgba(255,255,255,.12) 0%, transparent 60%);
-      pointer-events: none;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--color-primary);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.25s ease-out;
     }
-    .logo-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.3);
-      border-radius: 50px;
-      padding: 8px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: .5px;
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .nav-cta {
+      background-color: var(--color-secondary);
+      color: #fff;
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 700;
       text-transform: uppercase;
-      margin-bottom: 24px;
-      backdrop-filter: blur(8px);
+      letter-spacing: 0.05em;
+      border-radius: 0;
+      transition: background-color 0.2s;
     }
-    .logo-icon {
-      width: 20px; height: 20px;
-      background: rgba(255,255,255,.9);
-      border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
+    .nav-cta:hover {
+      background-color: var(--color-primary);
     }
-    .logo-icon svg { width: 12px; height: 12px; }
-    header h1 {
-      font-size: clamp(28px, 5vw, 44px);
+
+    /* ── HEADER HERO ── */
+    .hero {
+      margin-top: var(--nav-height);
+      padding: 80px 40px 60px;
+      background-color: var(--bg-body);
+      max-width: 1200px;
+      margin-left: auto;
+      margin-right: auto;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .legal-tag {
+      color: var(--color-primary);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+    .legal-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1.05;
       font-weight: 800;
-      letter-spacing: -1px;
-      margin-bottom: 10px;
+      letter-spacing: -0.04em;
+      color: var(--text-main);
+      margin-bottom: 16px;
     }
-    header .subtitle {
-      font-size: 16px;
-      opacity: .85;
+    .legal-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    .meta-badge {
+      display: inline-block;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 0;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── LAYOUT CONTAINER ── */
+    .content-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px 120px;
+      display: flex;
+      gap: 60px;
+      position: relative;
+    }
+
+    /* ── SIDEBAR TOC ── */
+    .legal-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: calc(var(--nav-height) + 40px);
+      height: fit-content;
+      align-self: flex-start;
+    }
+    @media (max-width: 1024px) {
+      .content-container {
+        flex-direction: column;
+        padding: 40px 24px 80px;
+        gap: 40px;
+      }
+      .legal-sidebar {
+        width: 100%;
+        position: static;
+      }
+    }
+    .legal-toc {
+      list-style: none;
+      padding: 0;
+    }
+    .legal-toc-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .legal-toc-item {
+      border-left: 2px solid var(--border-color);
+    }
+    .legal-toc-link {
+      display: block;
+      padding: 10px 20px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+    .legal-toc-link:hover {
+      color: var(--color-primary);
+      padding-left: 24px;
+    }
+    .legal-toc-item.active {
+      border-left-color: var(--color-primary);
+      background-color: rgba(0, 191, 179, 0.05);
+    }
+    .legal-toc-item.active .legal-toc-link {
+      color: var(--color-primary-dark);
+      font-weight: 600;
+    }
+
+    /* ── MAIN CONTENT ── */
+    .legal-content {
+      flex-grow: 1;
+      max-width: 800px;
+    }
+    .legal-section {
+      margin-bottom: 60px;
+      scroll-margin-top: calc(var(--nav-height) + 30px);
+    }
+    .legal-section h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--color-secondary);
+      margin-bottom: 24px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .legal-section p {
+      color: var(--text-secondary);
+      font-size: 1rem;
       margin-bottom: 20px;
     }
-    .meta-pill {
-      display: inline-block;
-      background: rgba(255,255,255,.2);
-      border: 1px solid rgba(255,255,255,.25);
-      border-radius: 50px;
-      padding: 5px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      backdrop-filter: blur(6px);
-    }
-
-    /* ── LAYOUT ─────────────────────────────────────────── */
-    main {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 56px 24px 80px;
-    }
-
-    /* ── TOC ─────────────────────────────────────────────── */
-    .toc {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--blue);
-      border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 48px;
-    }
-    .toc h2 {
-      font-size: 13px;
+    .legal-section h3 {
+      font-size: 1.15rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .8px;
-      color: var(--blue);
+      color: var(--text-main);
+      margin-top: 32px;
       margin-bottom: 14px;
     }
-    .toc ol {
-      padding-left: 18px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px 24px;
-    }
-    @media (max-width: 540px) { .toc ol { grid-template-columns: 1fr; } }
-    .toc li { font-size: 14px; }
-    .toc a {
-      color: var(--blue);
-      text-decoration: none;
-      font-weight: 500;
-    }
-    .toc a:hover { text-decoration: underline; }
 
-    /* ── SECTIONS ────────────────────────────────────────── */
-    section {
-      margin-bottom: 48px;
-      scroll-margin-top: 24px;
-    }
-    section h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-icon {
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      background: var(--gradient);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .section-icon svg { width: 16px; height: 16px; color: #fff; fill: #fff; }
-
-    p { margin-bottom: 14px; color: #374151; font-size: 15px; }
-    p:last-child { margin-bottom: 0; }
-
-    /* ── CARDS ───────────────────────────────────────────── */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px 26px;
-      margin-bottom: 14px;
-      box-shadow: var(--shadow);
-    }
-    .card h3 {
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--blue);
-      margin-bottom: 10px;
-    }
-
-    /* ── LISTS ───────────────────────────────────────────── */
+    /* Lists */
     ul, ol {
-      padding-left: 20px;
-      margin-bottom: 14px;
-      color: #374151;
-      font-size: 15px;
+      padding-left: 24px;
+      margin-bottom: 20px;
+      color: var(--text-secondary);
     }
-    li { margin-bottom: 5px; }
-    ul.check-list { list-style: none; padding-left: 0; }
-    ul.check-list li {
-      padding-left: 26px;
-      position: relative;
-      margin-bottom: 6px;
+    li {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
     }
-    ul.check-list li::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: var(--cyan);
-      font-weight: 700;
-    }
-    ul.cross-list { list-style: none; padding-left: 0; }
-    ul.cross-list li {
-      padding-left: 26px;
-      position: relative;
-      margin-bottom: 6px;
-    }
-    ul.cross-list li::before {
-      content: '✗';
-      position: absolute;
-      left: 0;
-      color: #EF4444;
-      font-weight: 700;
+    .legal-section strong {
+      color: var(--text-main);
     }
 
-    /* ── HIGHLIGHT BOX ───────────────────────────────────── */
-    .highlight {
-      background: linear-gradient(135deg, rgba(37,99,235,.07) 0%, rgba(6,182,212,.07) 100%);
-      border: 1px solid rgba(37,99,235,.2);
-      border-radius: var(--radius);
-      padding: 20px 24px;
-      margin-bottom: 16px;
+    /* Tables */
+    .data-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin: 24px 0;
+      border: 1px solid var(--border-color);
     }
-    .highlight p { margin-bottom: 0; }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    .data-table th, .data-table td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .data-table th {
+      background-color: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
 
-    /* ── THIRD-PARTY ─────────────────────────────────────── */
-    .third-party-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 24px;
+    /* Highlight blocks */
+    .callout {
+      background-color: var(--bg-surface);
+      border-left: 4px solid var(--color-primary);
+      padding: 24px;
+      margin: 28px 0;
+    }
+    .callout p {
+      margin-bottom: 0;
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+    .callout strong {
+      color: var(--text-main);
+    }
+
+    /* ── THIRD-PARTY INTEGRATIONS ── */
+    .partner-card {
+      border: 1px solid var(--border-color);
+      padding: 24px;
+      margin-bottom: 18px;
       display: flex;
+      gap: 20px;
       align-items: flex-start;
-      gap: 16px;
-      box-shadow: var(--shadow);
-      margin-bottom: 14px;
+      background-color: var(--bg-surface);
     }
-    .firebase-logo {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, #FFA000, #F57C00);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
+    .partner-icon {
+      font-size: 24px;
+      line-height: 1;
       flex-shrink: 0;
-      font-size: 20px;
     }
-    .third-party-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .third-party-card p { font-size: 14px; margin-bottom: 6px; }
-    .third-party-card a { color: var(--blue); font-weight: 500; font-size: 14px; }
+    .partner-details h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+    .partner-details p {
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+    .partner-details a {
+      color: var(--color-primary-dark);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .partner-details a:hover {
+      text-decoration: underline;
+    }
 
-    /* ── CONTACT ─────────────────────────────────────────── */
+    /* ── CONTACT GRID ── */
     .contact-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .contact-card {
+      border: 1px solid var(--border-color);
+      padding: 20px;
+      background-color: var(--bg-surface);
+    }
+    .contact-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .contact-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-secondary);
+    }
+    .contact-card a {
+      color: var(--color-primary-dark);
+      text-decoration: none;
+    }
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background-color: var(--bg-dark-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 80px 40px 40px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+    @media (max-width: 768px) {
+      footer {
+        padding: 60px 24px 30px;
+      }
+      .footer-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    .footer-col h5 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 20px;
+    }
+    .footer-col ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .footer-col li {
+      margin-bottom: 10px;
+    }
+    .footer-col a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover {
+      color: var(--color-primary);
+    }
+    .footer-about {
+      max-width: 320px;
+    }
+    .footer-about p {
+      font-size: 0.85rem;
       margin-top: 16px;
     }
-    .contact-item {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 16px 20px;
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      border-top: 1px solid rgba(15, 23, 42, 0.05);
+      padding-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
-    .contact-item .label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .7px;
-      color: var(--muted);
-      margin-bottom: 4px;
+    @media (max-width: 640px) {
+      .footer-bottom {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+        text-align: center;
+      }
     }
-    .contact-item a, .contact-item span {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--blue);
-      text-decoration: none;
-      word-break: break-all;
-    }
-    .contact-item a:hover { text-decoration: underline; }
 
-    /* ── FOOTER ─────────────────────────────────────────── */
-    footer {
-      background: var(--gradient);
-      color: rgba(255,255,255,.9);
-      text-align: center;
-      padding: 32px 24px;
-      font-size: 13px;
+    /* ── ACCESSIBILITY & UTILITIES ── */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
-    footer strong { color: #fff; }
-    footer a { color: rgba(255,255,255,.8); text-decoration: underline; }
 
-    /* ── PRINT ───────────────────────────────────────────── */
+    /* ── PRINT VIEW ── */
     @media print {
-      header { background: #1e40af !important; -webkit-print-color-adjust: exact; }
-      .toc { break-inside: avoid; }
-      section { break-inside: avoid; }
-      footer { background: #1e40af !important; -webkit-print-color-adjust: exact; }
+      .navbar, .legal-sidebar, footer {
+        display: none !important;
+      }
+      .hero {
+        margin-top: 0;
+        padding: 0 0 20px;
+      }
+      .content-container {
+        padding: 20px 0;
+      }
+      body {
+        color: #000;
+        font-size: 12pt;
+      }
+      .legal-section h2 {
+        border-bottom: 1px solid #000;
+      }
     }
-
-    /* ── SKIP LINK ───────────────────────────────────────── */
-    .skip-link {
-      position: absolute; top: -40px; left: 0;
-      background: var(--blue); color: #fff;
-      padding: 8px 16px; border-radius: 0 0 8px 0;
-      font-size: 14px; font-weight: 600;
-      text-decoration: none; z-index: 100;
-    }
-    .skip-link:focus { top: 0; }
   </style>
 </head>
 <body>
 
   <a class="skip-link" href="#main-content">Skip to main content</a>
 
-  <!-- ── HEADER ─────────────────────────────────────────── -->
-  <header role="banner">
-    <div class="logo-badge" aria-label="Fraylon Technologies LLP">
-      <div class="logo-icon" aria-hidden="true">
-        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="1" y="1" width="4" height="4" rx="1" fill="#2563EB"/>
-          <rect x="7" y="1" width="4" height="4" rx="1" fill="#06B6D4"/>
-          <rect x="1" y="7" width="4" height="4" rx="1" fill="#06B6D4"/>
-          <rect x="7" y="7" width="4" height="4" rx="1" fill="#2563EB"/>
-        </svg>
-      </div>
-      Fraylon Technologies LLP
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar" role="navigation" aria-label="Main Navigation">
+    <a href="https://fraylontech.com" class="brand" aria-label="Fraylon Technologies Home">
+      <img src="https://fraylontech.com/logo.png" alt="Fraylon Technologies Logo" class="brand-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+      <span style="display:none;">Fraylon Technologies</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="https://fraylontech.com/#features" class="nav-link">Features</a></li>
+      <li><a href="https://fraylontech.com/#about" class="nav-link">About</a></li>
+      <li><a href="https://fraylontech.com/#contact" class="nav-link">Contact</a></li>
+    </ul>
+    <a href="https://fraylontech.com" class="nav-cta">Go to Web</a>
+  </nav>
+
+  <!-- ── HERO HEADER ── -->
+  <header class="hero" role="banner">
+    <span class="legal-tag">Legal Document</span>
+    <h1 class="legal-title">Privacy Policy</h1>
+    <p class="legal-subtitle">For Fraylon Workspace collaboration application</p>
+    <div class="meta-wrapper">
+      <span class="meta-badge">Last Updated: July 2026</span>
+      <span class="meta-badge" style="margin-left: 8px;">Version 2.0</span>
     </div>
-    <h1>Fraylon Workspace</h1>
-    <p class="subtitle">Privacy Policy</p>
-    <span class="meta-pill">Last Updated: July 2026</span>
   </header>
 
-  <!-- ── MAIN ───────────────────────────────────────────── -->
-  <main id="main-content">
+  <!-- ── CONTENT LAYOUT ── -->
+  <div class="content-container">
 
-    <!-- Table of Contents -->
-    <nav class="toc" aria-label="Table of contents">
-      <h2>Table of Contents</h2>
-      <ol>
-        <li><a href="#introduction">Introduction</a></li>
-        <li><a href="#information-collected">Information We Collect</a></li>
-        <li><a href="#how-we-use">How We Use Information</a></li>
-        <li><a href="#third-party">Third-Party Services</a></li>
-        <li><a href="#data-security">Data Security</a></li>
-        <li><a href="#data-retention">Data Retention</a></li>
-        <li><a href="#user-rights">Your Rights</a></li>
-        <li><a href="#childrens-privacy">Children's Privacy</a></li>
-        <li><a href="#changes">Changes to This Policy</a></li>
-        <li><a href="#contact">Contact Information</a></li>
-      </ol>
-    </nav>
-
-    <!-- 1. Introduction -->
-    <section id="introduction">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.75 10.5h-1.5v-5h1.5v5zm0-6.5h-1.5V3.5h1.5V5z"/></svg>
-        </span>
-        Introduction
-      </h2>
-      <div class="highlight">
-        <p>This Privacy Policy describes how <strong>Fraylon Technologies LLP</strong> ("<strong>we</strong>", "<strong>our</strong>", or "<strong>us</strong>") collects, uses, and protects information when you use <strong>Fraylon Workspace</strong> — our enterprise collaboration and workspace management platform.</p>
-      </div>
-      <p>Fraylon Workspace is designed exclusively for organisations and their authorised employees. The platform enables organisations to manage and streamline:</p>
-      <ul class="check-list">
-        <li>Task creation, assignment, and tracking</li>
-        <li>Team communication and collaboration</li>
-        <li>Organisation-wide announcements</li>
-        <li>Calendar and scheduling management</li>
-        <li>Push notifications and alerts</li>
-        <li>Employee profiles and role management</li>
-        <li>Departmental and workspace administration</li>
+    <!-- Sticky Table of Contents Sidebar -->
+    <aside class="legal-sidebar" aria-label="Table of Contents">
+      <div class="legal-toc-title">On this page</div>
+      <ul class="legal-toc">
+        <li class="legal-toc-item active" id="toc-introduction"><a href="#introduction" class="legal-toc-link">1. Introduction</a></li>
+        <li class="legal-toc-item" id="toc-data-controller"><a href="#data-controller" class="legal-toc-link">2. Data Roles &amp; Scope</a></li>
+        <li class="legal-toc-item" id="toc-data-collected"><a href="#data-collected" class="legal-toc-link">3. Information We Collect</a></li>
+        <li class="legal-toc-item" id="toc-legal-basis"><a href="#legal-basis" class="legal-toc-link">4. Legal Basis for Processing</a></li>
+        <li class="legal-toc-item" id="toc-how-we-use"><a href="#how-we-use" class="legal-toc-link">5. How We Use Information</a></li>
+        <li class="legal-toc-item" id="toc-third-party"><a href="#third-party" class="legal-toc-link">6. Third-Party Integrations</a></li>
+        <li class="legal-toc-item" id="toc-data-security"><a href="#data-security" class="legal-toc-link">7. Security Practices</a></li>
+        <li class="legal-toc-item" id="toc-data-retention"><a href="#data-retention" class="legal-toc-link">8. Data Retention &amp; Deletion</a></li>
+        <li class="legal-toc-item" id="toc-user-rights"><a href="#user-rights" class="legal-toc-link">9. Your Rights &amp; Choices</a></li>
+        <li class="legal-toc-item" id="toc-childrens-privacy"><a href="#childrens-privacy" class="legal-toc-link">10. Children's Privacy</a></li>
+        <li class="legal-toc-item" id="toc-changes"><a href="#changes" class="legal-toc-link">11. Changes to This Policy</a></li>
+        <li class="legal-toc-item" id="toc-contact"><a href="#contact" class="legal-toc-link">12. Contact Information</a></li>
       </ul>
-      <p>By accessing or using Fraylon Workspace, you agree to the collection and use of information as described in this policy. If you do not agree, please discontinue use of the application.</p>
-    </section>
+    </aside>
 
-    <!-- 2. Information We Collect -->
-    <section id="information-collected">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3z"/></svg>
-        </span>
-        Information We Collect
-      </h2>
-      <p>We collect information necessary to provide, maintain, and secure the Fraylon Workspace platform. This information is provided directly by you or your organisation's administrator.</p>
+    <!-- Main Text Content -->
+    <main class="legal-content" id="main-content">
 
-      <div class="card">
-        <h3>Account &amp; Profile Information</h3>
-        <ul class="check-list">
-          <li>Full name (display name)</li>
-          <li>Email address (used for authentication)</li>
-          <li>Employee ID and Firebase User ID</li>
-          <li>Organisation name</li>
-          <li>Department and team</li>
-          <li>Role and permission level</li>
-          <li>Profile photograph (optional, user-selected)</li>
+      <!-- 1. Introduction -->
+      <section id="introduction" class="legal-section">
+        <h2>1. Introduction</h2>
+        <p>Fraylon Workspace is a professional enterprise collaboration and workspace productivity application developed and published by <strong>Fraylon Technologies LLP</strong> ("<strong>we</strong>", "<strong>our</strong>", or "<strong>us</strong>"). We are committed to protecting the privacy of all authorized users of our services.</p>
+        <p>This Privacy Policy explains how personal data is collected, used, disclosed, and protected when you use our mobile and web applications (collectively, the "<strong>App</strong>"). This document has been prepared in accordance with Google Play Developer Policies, Google Play Data Safety specifications, and general global privacy guidelines, including the General Data Protection Regulation (GDPR).</p>
+      </section>
+
+      <!-- 2. Data Roles & Scope -->
+      <section id="data-controller" class="legal-section">
+        <h2>2. Data Roles &amp; Scope</h2>
+        <p>Fraylon Workspace is primarily intended for deployment by businesses, teams, and other organizations. When you access the App as an employee or team member of an organization:</p>
+        <ul>
+          <li><strong>Your Organization is the Data Controller:</strong> Your employer or organization is the primary entity that controls and manages the workspace. They determine the purposes, administrative settings, and policies governing the workspace data.</li>
+          <li><strong>Fraylon Technologies is the Data Processor:</strong> We host, maintain, and provide the App infrastructure under the instructions of your organization. We act as a processor, providing the software framework to facilitate your organization's internal collaboration.</li>
         </ul>
-      </div>
+        <div class="callout">
+          <p><strong>Note for Users:</strong> Because your organization manages your account, all requests regarding changes to user permissions, workspace deletions, or access privileges should first be directed to your organization's IT or workspace administrator.</p>
+        </div>
+      </section>
 
-      <div class="card">
-        <h3>Workspace Activity Data</h3>
-        <ul class="check-list">
-          <li>Tasks created, assigned, completed, or overdue</li>
-          <li>Announcements created or interacted with</li>
-          <li>Calendar events and scheduling data</li>
-          <li>Notification preferences and alert settings</li>
-          <li>App interaction data (e.g. screens visited, features used)</li>
+      <!-- 3. Information We Collect -->
+      <section id="data-collected" class="legal-section">
+        <h2>3. Information We Collect</h2>
+        <p>To provide a functional collaborative environment, Fraylon Workspace collects specific categories of user data. We only collect the minimum amount of data required to support the App's features.</p>
+        
+        <h3>A. Active Data Collection</h3>
+        <p>This data is actively supplied by you or your workspace administrator during account creation and subsequent use of the App:</p>
+        
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Data Category</th>
+                <th style="width: 40%;">Specific Data Collected</th>
+                <th style="width: 30%;">App Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Personal Info</strong></td>
+                <td>Name, email address, User IDs (Firebase UID)</td>
+                <td>Account setup, profile identification, secure login</td>
+              </tr>
+              <tr>
+                <td><strong>Professional Details</strong></td>
+                <td>Organization name, department, role, employee ID (optional)</td>
+                <td>Workspace permissions, organizational structuring</td>
+              </tr>
+              <tr>
+                <td><strong>User Content</strong></td>
+                <td>Profile photo (optional, user-uploaded)</td>
+                <td>Personalizing the workspace environment</td>
+              </tr>
+              <tr>
+                <td><strong>Collaborative Data</strong></td>
+                <td>Tasks, calendar events, announcements, notifications list</td>
+                <td>Core workflow, assignment tracking, and team messaging</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>B. Technical &amp; Device Data Collection</h3>
+        <p>Our infrastructure automatically processes technical data required for security, communication, and performance monitoring:</p>
+        
+        <div class="data-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th style="width: 30%;">Data Category</th>
+                <th style="width: 40%;">Specific Data Collected</th>
+                <th style="width: 30%;">App Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Device or Other IDs</strong></td>
+                <td>Unique device tokens (FCM push tokens), instance IDs</td>
+                <td>Push notification delivery, diagnostic logs</td>
+              </tr>
+              <tr>
+                <td><strong>App Activity</strong></td>
+                <td>App interactions, page navigation, task actions</td>
+                <td>UI responsiveness optimization and diagnostic tracking</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>C. Data We Do NOT Collect</h3>
+        <p>Fraylon Workspace is a productivity app and has no access to sensitive personal data categories. We explicitly declare that the App does <strong>not</strong> access, collect, or transmit:</p>
+        <ul>
+          <li>Approximate or precise location data</li>
+          <li>Financial details, billing, or card information</li>
+          <li>Health, fitness, or biometric data</li>
+          <li>SMS messages, call histories, or contacts list</li>
+          <li>Any media files, photos, or documents outside of the user-selected profile image</li>
+          <li>Microphone or camera hardware (except for the direct purpose of taking a profile picture)</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
-        <h3>Device &amp; Technical Information</h3>
-        <ul class="check-list">
-          <li>Device identifiers used by Firebase services</li>
-          <li>Firebase Authentication tokens</li>
-          <li>App performance and crash diagnostics (anonymous)</li>
+      <!-- 4. Legal Basis for Processing -->
+      <section id="legal-basis" class="legal-section">
+        <h2>4. Legal Basis for Processing</h2>
+        <p>For users located within the European Economic Area (EEA) and under the General Data Protection Regulation (GDPR), we process your data under the following legal bases:</p>
+        <ul>
+          <li><strong>Performance of a Contract:</strong> The processing is necessary to perform our obligations under the agreement between us and your organization.</li>
+          <li><strong>Legitimate Interests:</strong> To maintain secure infrastructure, prevent platform fraud, protect user accounts, and verify domain configurations.</li>
+          <li><strong>Consent:</strong> When you voluntarily upload optional details, such as a profile image, you explicitly consent to the display of that image to other members of your workspace. You may remove your profile image at any time.</li>
         </ul>
-      </div>
+      </section>
 
-      <div class="card">
-        <h3>Information We Do NOT Collect</h3>
-        <ul class="cross-list">
-          <li>Precise or approximate device location</li>
-          <li>Health or fitness data</li>
-          <li>Financial or payment information</li>
-          <li>Device contacts or address book</li>
-          <li>SMS, call logs, or phone data</li>
-          <li>Photos outside of user-selected profile images</li>
-          <li>Microphone or audio recordings</li>
-          <li>Camera data except during voluntary profile photo selection</li>
-          <li>Browsing history outside the app</li>
+      <!-- 5. How We Use Information -->
+      <section id="how-we-use" class="legal-section">
+        <h2>5. How We Use Information</h2>
+        <p>We process the collected data solely to deliver the enterprise services configured for your organization. Specifically, your data is used for:</p>
+        <ul>
+          <li><strong>Account Administration &amp; Access Control:</strong> To authenticate your login credentials and apply your designated role permissions (e.g. Employee, Manager, CTO, Admin).</li>
+          <li><strong>Enterprise Communication:</strong> Processing and distributing team announcements, calendar invites, and notification alerts.</li>
+          <li><strong>Task Management &amp; Reporting:</strong> Managing deadlines, tracking task statuses, and generating productivity metric charts visible to your team.</li>
+          <li><strong>Notification Delivery:</strong> Sending push alerts for urgent task assignments and changes.</li>
+          <li><strong>Security &amp; Abuse Prevention:</strong> Verifying domain compliance (such as restricting login/registration strictly to the authorized <code>@fraylontech.com</code> domain) and preventing unauthorized platform access.</li>
         </ul>
-      </div>
-    </section>
+        <p>We do not use your personal information for marketing, profiling, or target advertisement. We do not sell or trade user data to any external parties.</p>
+      </section>
 
-    <!-- 3. How We Use Information -->
-    <section id="how-we-use">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 2h12v2H2V2zm0 4h8v2H2V6zm0 4h10v2H2v-2z"/></svg>
-        </span>
-        How We Use Information
-      </h2>
-      <p>Information collected through Fraylon Workspace is used <strong>solely</strong> for the following purposes and is never sold or rented to third parties:</p>
-      <ul class="check-list">
-        <li><strong>Authentication:</strong> Verifying user identity and securing access to workspace accounts.</li>
-        <li><strong>Workspace management:</strong> Enabling administrators to organise teams, departments, and roles.</li>
-        <li><strong>Employee collaboration:</strong> Facilitating task assignments, team visibility, and workspace coordination.</li>
-        <li><strong>Task management:</strong> Creating, tracking, and reporting on task progress and deadlines.</li>
-        <li><strong>Calendar scheduling:</strong> Displaying and managing work-related events and deadlines.</li>
-        <li><strong>Notifications:</strong> Sending relevant workspace alerts and announcements to authorised users.</li>
-        <li><strong>Security:</strong> Protecting accounts, detecting misuse, and enforcing access controls.</li>
-        <li><strong>Service improvement:</strong> Diagnosing technical issues and improving app reliability and performance.</li>
-      </ul>
-    </section>
+      <!-- 6. Third-Party Integrations -->
+      <section id="third-party" class="legal-section">
+        <h2>6. Third-Party Integrations</h2>
+        <p>We utilize trusted backend infrastructure provided by <strong>Google Firebase</strong> (Google LLC) to deliver secure and stable performance. Data processed by these services is encrypted in transit and at rest:</p>
 
-    <!-- 4. Third-Party Services -->
-    <section id="third-party">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1L1 5v6l7 4 7-4V5L8 1zm0 2.236L13 6.382v3.236L8 12.764 3 9.618V6.382L8 3.236z"/></svg>
-        </span>
-        Third-Party Services
-      </h2>
-      <p>Fraylon Workspace is powered by <strong>Google Firebase</strong>, a platform provided by Google LLC. The following Firebase services are used and may process user data to deliver core app functionality:</p>
-
-      <div class="third-party-card">
-        <div class="firebase-logo" aria-hidden="true">🔥</div>
-        <div>
-          <h3>Google Firebase</h3>
-          <p><strong>Firebase Authentication</strong> — Securely manages user sign-in and identity verification using email and password credentials.</p>
-          <p><strong>Cloud Firestore</strong> — Stores workspace data including user profiles, tasks, announcements, and calendar events.</p>
-          <p><strong>Firebase Cloud Messaging (FCM)</strong> — Delivers push notifications and workspace alerts to authorised users.</p>
-          <p><strong>Firebase Storage</strong> — Stores user-uploaded profile photos and associated workspace assets.</p>
-          <p>Google may process and store information in accordance with its own privacy policies. For details, please refer to:<br/>
-          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy →</a></p>
+        <div class="partner-card">
+          <div class="partner-icon" aria-hidden="true">🔒</div>
+          <div class="partner-details">
+            <h4>Firebase Authentication</h4>
+            <p>Provides secure, encrypted user credential storage and session token verification. All login calls are validated against this service.</p>
+          </div>
         </div>
-      </div>
 
-      <p>We do not share your personal information with any other third parties, advertisers, or data brokers.</p>
-    </section>
-
-    <!-- 5. Data Security -->
-    <section id="data-security">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1L2 4v4c0 3.3 2.5 6.4 6 7 3.5-.6 6-3.7 6-7V4L8 1zm0 2.18l4 2v3.82c0 2.2-1.7 4.3-4 4.9-2.3-.6-4-2.7-4-4.9V5.18l4-2z"/></svg>
-        </span>
-        Data Security
-      </h2>
-      <p>The security of your data is our highest priority. Fraylon Workspace implements the following measures to protect user information:</p>
-      <ul class="check-list">
-        <li><strong>HTTPS encryption:</strong> All data transmitted between the app and our servers is encrypted using TLS/HTTPS protocols.</li>
-        <li><strong>Secure authentication:</strong> Firebase Authentication uses industry-standard token-based authentication to verify and protect user sessions.</li>
-        <li><strong>Firebase Security Rules:</strong> Firestore and Storage access is strictly controlled by server-side security rules, preventing unauthorised reads or writes.</li>
-        <li><strong>Role-based access control (RBAC):</strong> Users can only access data and features corresponding to their assigned role (e.g. Employee, Manager, CTO, Admin).</li>
-        <li><strong>Limited administrator access:</strong> Only authorised organisation administrators may view or modify user records.</li>
-        <li><strong>Regular security improvements:</strong> We continuously review and update security measures to address emerging threats.</li>
-      </ul>
-      <div class="highlight">
-        <p>While we implement robust security measures, no system is completely immune to risks. We encourage users to maintain strong, unique passwords and report any suspected security concerns to <strong>fraylontechnologies@gmail.com</strong>.</p>
-      </div>
-    </section>
-
-    <!-- 6. Data Retention -->
-    <section id="data-retention">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm.5 7.5h-1V4h1v4.5zm0 2h-1v-1h1v1z"/></svg>
-        </span>
-        Data Retention
-      </h2>
-      <p>Fraylon Workspace retains user data for as long as the user's organisation maintains an active workspace account on the platform.</p>
-      <ul class="check-list">
-        <li>User profiles and account data are retained while the associated organisation account remains active.</li>
-        <li>When an employee account is deactivated or removed by an administrator, associated personal data may be deleted or anonymised in accordance with the organisation's data management policies.</li>
-        <li>Workspace activity data (tasks, announcements, calendar events) may be retained for organisational record-keeping purposes at the discretion of the organisation administrator.</li>
-        <li>Users wishing to request deletion of their personal data may do so by contacting their organisation administrator or submitting a request through our <a href="https://forms.gle/ckzReZbmkBqyyPWw5" target="_blank" rel="noopener noreferrer">Account Deletion Request Form</a>.</li>
-      </ul>
-    </section>
-
-    <!-- 7. User Rights -->
-    <section id="user-rights">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zm1 10H7v-2h2v2zm0-4H7V5h2v2z"/></svg>
-        </span>
-        Your Rights
-      </h2>
-      <p>As a user of Fraylon Workspace, you have the following rights with respect to your personal data:</p>
-      <ul class="check-list">
-        <li><strong>Access:</strong> You may request a copy of the personal data we hold about you.</li>
-        <li><strong>Correction:</strong> You may request that inaccurate or incomplete information be corrected. Many profile fields can be updated directly within the app.</li>
-        <li><strong>Deletion:</strong> You may request deletion of your personal data where applicable, subject to organisational and legal retention requirements.</li>
-        <li><strong>Account deactivation:</strong> Account deactivation and removal is managed through your organisation's administrators.</li>
-        <li><strong>Data portability:</strong> You may request a structured copy of your personal data in a machine-readable format.</li>
-      </ul>
-      <p>To exercise any of these rights, please contact your organisation administrator or reach us directly at <a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a>.</p>
-    </section>
-
-    <!-- 8. Children's Privacy -->
-    <section id="childrens-privacy">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zm0 2c-4 0-6 2-6 3v1h12v-1c0-1-2-3-6-3z"/></svg>
-        </span>
-        Children's Privacy
-      </h2>
-      <div class="highlight">
-        <p><strong>Fraylon Workspace is an enterprise platform intended solely for organisations and individuals aged 18 years or older.</strong> The app is not directed toward children, and we do not knowingly collect personal information from anyone under the age of 18.</p>
-      </div>
-      <p>If we become aware that personal data has been collected from a person under 18 without verification of parental consent, we will take prompt steps to delete that information. If you believe we may have collected information from a minor, please contact us immediately at <a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a>.</p>
-    </section>
-
-    <!-- 9. Changes -->
-    <section id="changes">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M13 2H3a1 1 0 00-1 1v10a1 1 0 001 1h10a1 1 0 001-1V3a1 1 0 00-1-1zm-1 10H4V4h8v8z"/></svg>
-        </span>
-        Changes to This Policy
-      </h2>
-      <p>We reserve the right to update or modify this Privacy Policy periodically to reflect changes in our practices, technology, legal requirements, or business operations.</p>
-      <ul class="check-list">
-        <li>When significant changes are made, users will be notified through in-app announcements or via the app update release notes.</li>
-        <li>The "Last Updated" date at the top of this page will be revised accordingly.</li>
-        <li>Continued use of Fraylon Workspace after changes are published constitutes acceptance of the updated policy.</li>
-      </ul>
-      <p>We encourage you to review this Privacy Policy periodically to stay informed about how we protect your information.</p>
-    </section>
-
-    <!-- 10. Contact -->
-    <section id="contact">
-      <h2>
-        <span class="section-icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v1L8 9 2 4V3zm0 2.5l5.5 4a1 1 0 001 0L14 5.5V13a1 1 0 01-1 1H3a1 1 0 01-1-1V5.5z"/></svg>
-        </span>
-        Contact Information
-      </h2>
-      <p>If you have any questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us:</p>
-      <div class="contact-grid">
-        <div class="contact-item">
-          <div class="label">Company</div>
-          <span>Fraylon Technologies LLP</span>
+        <div class="partner-card">
+          <div class="partner-icon" aria-hidden="true">💾</div>
+          <div class="partner-details">
+            <h4>Cloud Firestore</h4>
+            <p>Acts as our database host, storing user profiles, active tasks, team configurations, and notification registers. Access is regulated by server-side Firebase Security Rules.</p>
+          </div>
         </div>
-        <div class="contact-item">
-          <div class="label">Email</div>
-          <a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a>
-        </div>
-        <div class="contact-item">
-          <div class="label">Website</div>
-          <a href="https://fraylontech.com" target="_blank" rel="noopener noreferrer">fraylontech.com</a>
-        </div>
-        <div class="contact-item">
-          <div class="label">Account Deletion</div>
-          <a href="https://forms.gle/ckzReZbmkBqyyPWw5" target="_blank" rel="noopener noreferrer">Request Form</a>
-        </div>
-      </div>
-    </section>
 
-  </main>
+        <div class="partner-card">
+          <div class="partner-icon" aria-hidden="true">🔔</div>
+          <div class="partner-details">
+            <h4>Firebase Cloud Messaging (FCM)</h4>
+            <p>Delivers real-time push alerts to your mobile or web device. This service utilizes unique device registration tokens to route notifications.</p>
+          </div>
+        </div>
 
-  <!-- ── FOOTER ─────────────────────────────────────────── -->
+        <div class="partner-card">
+          <div class="partner-icon" aria-hidden="true">📁</div>
+          <div class="partner-details">
+            <h4>Firebase Storage</h4>
+            <p>Hosts profile images uploaded directly by users. Files are stored securely and accessed via authorized App requests.</p>
+          </div>
+        </div>
+
+        <p>Google may process information in accordance with its own privacy policies. You can learn more about how Google handles Firebase data by visiting the link below:<br/>
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy &amp; Terms Policy →</a></p>
+      </section>
+
+      <!-- 7. Security Practices -->
+      <section id="data-security" class="legal-section">
+        <h2>7. Security Practices</h2>
+        <p>We implement professional, industry-standard administrative, physical, and technical safeguards designed to protect personal data from unauthorized access, modification, or disclosure:</p>
+        <ul>
+          <li><strong>Encryption in Transit:</strong> All communications between the App and Firebase backend services are strictly encrypted using HTTPS and transport layer security (TLS 1.2/1.3).</li>
+          <li><strong>Authentication Integrity:</strong> User sessions are validated using signed JSON Web Tokens (JWT) which expire automatically to prevent hijacking.</li>
+          <li><strong>Access Control &amp; Roles:</strong> Database queries are protected at the database level by robust Firebase Security Rules. Employees cannot modify organizational structure, and users can only access information within their permitted scope.</li>
+          <li><strong>Limited Administrative Access:</strong> Technical access to the cloud project console is restricted to senior engineering personnel under multi-factor authentication (MFA).</li>
+        </ul>
+      </section>
+
+      <!-- 8. Data Retention & Deletion -->
+      <section id="data-retention" class="legal-section">
+        <h2>8. Data Retention &amp; Deletion</h2>
+        <p>Because Fraylon Workspace is an enterprise collaboration platform, data retention is managed according to the guidelines set by your organization (the Data Controller):</p>
+        <ul>
+          <li><strong>Active Workspace Accounts:</strong> We retain account, profile, and activity data while your organization maintains an active subscription or workspace on our platform.</li>
+          <li><strong>User Account Deletion:</strong> If you are a team member and wish to have your account deleted, please contact your organization's workspace administrator. When an administrator removes a profile, the personal record is deleted from the active authentication list.</li>
+          <li><strong>Independent Deletion Request:</strong> You may also request account and personal data deletion directly from us by submitting our online form:<br/>
+          <a href="https://forms.gle/ckzReZbmkBqyyPWw5" target="_blank" rel="noopener noreferrer">Fraylon Workspace Account Deletion Request Form →</a></li>
+          <li><strong>Metadata and Backups:</strong> System backups are maintained for up to 30 days for operational disaster recovery, after which backups are overwritten.</li>
+        </ul>
+      </section>
+
+      <!-- 9. Your Rights & Choices -->
+      <section id="user-rights" class="legal-section">
+        <h2>9. Your Rights &amp; Choices</h2>
+        <p>Depending on your location and jurisdiction (such as under the GDPR or CCPA), you may possess specific statutory rights regarding your personal information:</p>
+        <ul>
+          <li><strong>Access &amp; Export:</strong> The right to request details on the personal data we hold and receive an exported copy of your profile.</li>
+          <li><strong>Correction:</strong> The right to request updates or corrections to outdated or inaccurate personal information.</li>
+          <li><strong>Deletion ("Right to be Forgotten"):</strong> The right to request the erasure of your personal data, subject to legitimate legal or contractual obligations.</li>
+          <li><strong>Restriction of Processing:</strong> The right to object to or ask us to restrict specific processing operations.</li>
+        </ul>
+        <p>To exercise any of these rights, please contact your organization administrator or reach out to us directly at <a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a>. We will respond to all valid requests within 30 days.</p>
+      </section>
+
+      <!-- 10. Children's Privacy -->
+      <section id="childrens-privacy" class="legal-section">
+        <h2>10. Children's Privacy</h2>
+        <div class="callout">
+          <p><strong>Age Restriction:</strong> Fraylon Workspace is designed exclusively for professional enterprise operations and is not intended for use by children. Users must be at least 18 years of age.</p>
+        </div>
+        <p>We do not knowingly collect or solicit personal information from children under the age of 18. If you believe that a minor has created an account or uploaded personal data, please notify us immediately. Upon verification, we will permanently delete the account and all associated records from our databases.</p>
+      </section>
+
+      <!-- 11. Changes to This Policy -->
+      <section id="changes" class="legal-section">
+        <h2>11. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time to reflect operational, legal, or regulatory modifications. When updates are published, we will modify the "Last Updated" date at the top of this document. Significant changes will be announced inside the App or communicated to your workspace administrator. Continued use of the App following changes constitutes acknowledgment of the revised terms.</p>
+      </section>
+
+      <!-- 12. Contact Information -->
+      <section id="contact" class="legal-section">
+        <h2>12. Contact Information</h2>
+        <p>If you have any questions, concerns, or requests regarding this Privacy Policy or the handling of your data, you can reach us via the following channels:</p>
+        
+        <div class="contact-grid">
+          <div class="contact-card">
+            <div class="contact-title">Publisher</div>
+            <div class="contact-value">Fraylon Technologies LLP</div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-title">Email Inquiry</div>
+            <div class="contact-value"><a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a></div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-title">Official Website</div>
+            <div class="contact-value"><a href="https://fraylontech.com" target="_blank" rel="noopener noreferrer">fraylontech.com</a></div>
+          </div>
+          <div class="contact-card">
+            <div class="contact-title">Deletion Request</div>
+            <div class="contact-value"><a href="https://forms.gle/ckzReZbmkBqyyPWw5" target="_blank" rel="noopener noreferrer">Account Deletion</a></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- ── FOOTER ── -->
   <footer role="contentinfo">
-    <p><strong>Copyright &copy; 2026 Fraylon Technologies LLP</strong> &mdash; All Rights Reserved.</p>
-    <p style="margin-top:6px; opacity:.8; font-size:12px;">
-      Fraylon Workspace &bull; Enterprise Collaboration Platform &bull;
-      <a href="mailto:fraylontechnologies@gmail.com">fraylontechnologies@gmail.com</a>
-    </p>
+    <div class="footer-container">
+      <div class="footer-col footer-about">
+        <a href="https://fraylontech.com" class="brand" aria-label="Fraylon Technologies Home">
+          <img src="https://fraylontech.com/logo.png" alt="Fraylon Technologies Logo" class="brand-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+          <span style="display:none;">Fraylon Technologies</span>
+        </a>
+        <p>Fraylon Technologies LLP develops clean, high-performance enterprise applications to optimize workspace productivity and team collaboration.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="https://fraylontech.com/#features">Features</a></li>
+          <li><a href="https://fraylontech.com/#security">Security</a></li>
+          <li><a href="https://fraylontech.com/#pricing">Enterprise Plans</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="https://fraylontech.com/#about">About Us</a></li>
+          <li><a href="https://fraylontech.com/#careers">Careers</a></li>
+          <li><a href="https://fraylontech.com/#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="https://fraylontech.com/privacy-policy">Privacy Policy</a></li>
+          <li><a href="https://fraylontech.com/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>Copyright &copy; 2026 Fraylon Technologies LLP. All Rights Reserved.</div>
+      <div>Registered Office: Sri Ram Nagar Colony, Balaji Nagar, Hyderabad.</div>
+    </div>
   </footer>
+
+  <!-- ── SCROLL SPY & LINK ACTIVE STATE SCRIPT ── -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('.legal-section');
+      const tocItems = document.querySelectorAll('.legal-toc-item');
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            
+            // Remove active class from all
+            tocItems.forEach(item => item.classList.remove('active'));
+            
+            // Add active class to corresponding item
+            const activeItem = document.getElementById(`toc-${id}`);
+            if (activeItem) {
+              activeItem.classList.add('active');
+            }
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => observer.observe(section));
+    });
+  </script>
 
 </body>
 </html>
