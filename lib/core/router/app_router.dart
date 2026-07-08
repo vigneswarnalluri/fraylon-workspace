@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/auth/presentation/providers/auth_providers.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -23,7 +22,6 @@ import '../../features/admin/presentation/screens/team_screen.dart';
 import '../../features/admin/presentation/screens/reports_screen.dart';
 import '../../features/admin/presentation/screens/settings_screen.dart';
 import '../../features/admin/presentation/screens/organizations_screen.dart';
-import '../services/permission_service.dart';
 
 /// Smooth fade + slight upward-slide transition for all shell tab routes
 CustomTransitionPage<void> _fadePage({
@@ -62,190 +60,152 @@ CustomTransitionPage<void> _fadePage({
 const _authRoutes = {'/login', '/register', '/forgot-password', '/reset-password'};
 
 // Routes that require authentication
-const _verificationRoute = '/email-verification';
+// The router is a static singleton — never recreated, never causes Riverpod
+// provider crashes. Auth-based navigation is handled by:
+//   • SplashScreen: listens to authStateProvider and routes on app start.
+//   • Sign-out handlers: call context.go('/login') explicitly.
+//   • Sign-in handlers: call context.go('/') explicitly.
+final _appRouter = GoRouter(
+  initialLocation: '/splash',
+  routes: [
+    // Splash
+    GoRoute(
+      path: '/splash',
+      builder: (context, state) => const SplashScreen(),
+    ),
 
-final routerProvider = Provider<GoRouter>((ref) {
-  // ValueNotifier used to signal GoRouter to re-run redirect on auth changes.
-  // Using ref.listen (not ref.watch) so the provider — and GoRouter — are
-  // created exactly once and never recreated when auth state changes.
-  final authNotifier = ValueNotifier<bool>(false);
-  ref.listen(authStateProvider, (_, __) {
-    authNotifier.value = !authNotifier.value; // toggle to notify listeners
-  });
-  ref.onDispose(authNotifier.dispose);
+    // Auth routes
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const ResponsiveLoginScreen(),
+    ),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterScreen(),
+    ),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordScreen(),
+    ),
+    GoRoute(
+      path: '/email-verification',
+      builder: (context, state) => const EmailVerificationScreen(),
+    ),
+    GoRoute(
+      path: '/reset-password',
+      builder: (context, state) {
+        final oobCode = state.uri.queryParameters['oobCode'];
+        return ResetPasswordScreen(oobCode: oobCode);
+      },
+    ),
 
-  return GoRouter(
-    initialLocation: '/splash',
-    refreshListenable: authNotifier,
-    routes: [
-      // Splash
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
+    // Authenticated shell routes
+    ShellRoute(
+      builder: (context, state, child) => ShellScreen(child: child),
+      routes: [
+        GoRoute(
+          path: '/',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const HomeScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/design-system',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const DesignSystemGalleryScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/tasks',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const TaskListScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/calendar',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const CalendarScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/announcements',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const AnnouncementsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/profile',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const ProfileScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/notifications',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const NotificationCenterScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/assistant',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const AssistantScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/team',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const TeamScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/reports',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const ReportsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/users',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const UsersScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/departments',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const DepartmentsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/organizations',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const OrganizationsScreen(),
+          ),
+        ),
+        GoRoute(
+          path: '/settings',
+          pageBuilder: (context, state) => _fadePage(
+            state: state,
+            child: const SettingsScreen(),
+          ),
+        ),
+      ],
+    ),
+  ],
+);
 
-      // Auth routes (unauthenticated only)
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const ResponsiveLoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterScreen(),
-      ),
-      GoRoute(
-        path: '/forgot-password',
-        builder: (context, state) => const ForgotPasswordScreen(),
-      ),
-      GoRoute(
-        path: '/email-verification',
-        builder: (context, state) => const EmailVerificationScreen(),
-      ),
-      GoRoute(
-        path: '/reset-password',
-        builder: (context, state) {
-          final oobCode = state.uri.queryParameters['oobCode'];
-          return ResetPasswordScreen(oobCode: oobCode);
-        },
-      ),
+/// Exposes the static router as a Riverpod provider for use in [app.dart].
+final routerProvider = Provider<GoRouter>((ref) => _appRouter);
 
-      // Authenticated shell routes
-      ShellRoute(
-        builder: (context, state, child) => ShellScreen(child: child),
-        routes: [
-          GoRoute(
-            path: '/',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const HomeScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/design-system',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const DesignSystemGalleryScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/tasks',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const TaskListScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/calendar',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const CalendarScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/announcements',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const AnnouncementsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/profile',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const ProfileScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/notifications',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const NotificationCenterScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/assistant',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const AssistantScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/team',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const TeamScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/reports',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const ReportsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/users',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const UsersScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/departments',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const DepartmentsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/organizations',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const OrganizationsScreen(),
-            ),
-          ),
-          GoRoute(
-            path: '/settings',
-            pageBuilder: (context, state) => _fadePage(
-              state: state,
-              child: const SettingsScreen(),
-            ),
-          ),
-        ],
-      ),
-    ],
-    redirect: (context, state) {
-      final isLoggedIn = ref.read(authStateProvider).valueOrNull != null;
-      final location = state.matchedLocation;
-
-      // Splash is always allowed
-      if (location == '/splash') return null;
-
-      // Auth routes: redirect to home if already logged in
-      if (isLoggedIn && _authRoutes.contains(location)) {
-        return '/';
-      }
-
-      // Protected routes: redirect to login if not logged in
-      if (!isLoggedIn &&
-          !_authRoutes.contains(location) &&
-          location != _verificationRoute) {
-        return '/login';
-      }
-
-      // Role-based route guard
-      if (isLoggedIn) {
-        final profileAsync = ref.read(userProfileProvider);
-        final profile = profileAsync.valueOrNull;
-        if (profile != null) {
-          final permissionService = ref.read(permissionServiceProvider);
-          if (!permissionService.canAccessRoute(profile, location)) {
-            return '/'; // Redirect to dashboard if unauthorized
-          }
-        }
-      }
-
-      return null;
-    },
-  );
-});
