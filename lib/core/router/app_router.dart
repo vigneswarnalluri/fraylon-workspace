@@ -65,10 +65,18 @@ const _authRoutes = {'/login', '/register', '/forgot-password', '/reset-password
 const _verificationRoute = '/email-verification';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
+  // ValueNotifier used to signal GoRouter to re-run redirect on auth changes.
+  // Using ref.listen (not ref.watch) so the provider — and GoRouter — are
+  // created exactly once and never recreated when auth state changes.
+  final authNotifier = ValueNotifier<bool>(false);
+  ref.listen(authStateProvider, (_, __) {
+    authNotifier.value = !authNotifier.value; // toggle to notify listeners
+  });
+  ref.onDispose(authNotifier.dispose);
 
   return GoRouter(
     initialLocation: '/splash',
+    refreshListenable: authNotifier,
     routes: [
       // Splash
       GoRoute(
@@ -207,7 +215,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     redirect: (context, state) {
-      final isLoggedIn = authState.valueOrNull != null;
+      final isLoggedIn = ref.read(authStateProvider).valueOrNull != null;
       final location = state.matchedLocation;
 
       // Splash is always allowed
