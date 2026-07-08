@@ -64,25 +64,11 @@ const _authRoutes = {'/login', '/register', '/forgot-password', '/reset-password
 // Routes that require authentication
 const _verificationRoute = '/email-verification';
 
-/// A ChangeNotifier that triggers GoRouter to re-evaluate its redirect
-/// whenever the auth state changes (sign-in or sign-out).
-class _RouterNotifier extends ChangeNotifier {
-  _RouterNotifier(this._ref) {
-    _ref.listen(authStateProvider, (_, __) => notifyListeners());
-  }
-  final Ref _ref;
-}
-
-final _routerNotifierProvider = ChangeNotifierProvider<_RouterNotifier>(
-  (ref) => _RouterNotifier(ref),
-);
-
 final routerProvider = Provider<GoRouter>((ref) {
-  final notifier = ref.watch(_routerNotifierProvider);
+  final authState = ref.watch(authStateProvider);
 
   return GoRouter(
     initialLocation: '/splash',
-    refreshListenable: notifier,
     routes: [
       // Splash
       GoRoute(
@@ -221,7 +207,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
     redirect: (context, state) {
-      final isLoggedIn = ref.read(authStateProvider).valueOrNull != null;
+      final isLoggedIn = authState.valueOrNull != null;
       final location = state.matchedLocation;
 
       // Splash is always allowed

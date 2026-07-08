@@ -954,7 +954,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               label: 'Sign Out',
               icon: Icons.logout_rounded,
               color: theme.colorScheme.error,
-              onTap: () => ref.read(authControllerProvider.notifier).signOut(),
+              onTap: () => ref.read(authControllerProvider.notifier).signOut().then((_) {
+                if (context.mounted) context.go('/login');
+              }),
             ),
           ],
         ),

@@ -143,8 +143,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       onConfirm: () {
         Navigator.of(context, rootNavigator: true).pop();
-        Future.microtask(() {
-          ref.read(authControllerProvider.notifier).signOut();
+        ref.read(authControllerProvider.notifier).signOut().then((_) {
+          if (context.mounted) context.go('/login');
         });
       },
     );
