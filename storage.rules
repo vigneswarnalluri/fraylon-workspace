@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Utility check for authentication
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Profile photos directory: authenticated users can read avatars, owners can upload/modify theirs
+    match /profiles/{userId}.jpg {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}

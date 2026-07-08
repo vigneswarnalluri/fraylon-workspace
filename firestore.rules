@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function hasRole(role) {
+      return isAuthenticated() && getUserData().role == role;
+    }
+    
+    function isSuperAdmin() {
+      return hasRole('Super Admin');
+    }
+    
+    function isOrgAdmin() {
+      return hasRole('Organization Admin');
+    }
+    
+    function isManager() {
+      return hasRole('Manager');
+    }
+
+    // Users Collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isSuperAdmin() || isOrgAdmin());
+      allow update: if (isAuthenticated() && request.auth.uid == userId && request.resource.data.role == resource.data.role) || isSuperAdmin() || isOrgAdmin();
+      allow delete: if isSuperAdmin() || isOrgAdmin();
+    }
+
+    // Tasks Collection rules
+    match /tasks/{taskId} {
+      allow read: if isAuthenticated();
+      // Allow writes only for managers/admins OR employees managing their assigned tasks
+      allow write: if isSuperAdmin() || isOrgAdmin() || isManager() ||
+        (isAuthenticated() && (resource == null || resource.data.assigneeId == request.auth.uid));
+    }
+
+    // Announcements Collection rules
+    match /announcements/{announcementId} {
+      allow read: if isAuthenticated();
+      allow write: if isSuperAdmin() || isOrgAdmin() || isManager();
+    }
+
+    // Notifications Collection rules
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated();
+    }
+  }
+}
