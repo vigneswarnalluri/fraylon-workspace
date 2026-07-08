@@ -389,6 +389,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       error: (_, _) => 'Good morning',
     );
 
+    final deadlinesCount = tasksList
+        .where((t) =>
+            t.status != 'Completed' &&
+            t.dueDate.isAfter(now.subtract(const Duration(days: 1))) &&
+            t.dueDate.isBefore(now.add(const Duration(days: 7))))
+        .length;
+
     final welcomeBanner = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -406,7 +413,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
               const SizedBox(height: 2),
               Text(
-                'Today\'s summary: $pendingTasks pending tasks and 2 deadlines.',
+                'Today\'s summary: $pendingTasks pending tasks and $deadlinesCount deadlines.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                   fontSize: 13,
