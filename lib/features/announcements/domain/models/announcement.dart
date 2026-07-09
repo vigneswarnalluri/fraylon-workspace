@@ -45,12 +45,24 @@ class Announcement {
   }
 
   factory Announcement.fromMap(Map<String, dynamic> map, String docId) {
+    DateTime parseDate(dynamic val) {
+      if (val == null) return DateTime.now();
+      if (val is DateTime) return val;
+      if (val is String) {
+        return DateTime.tryParse(val) ?? DateTime.now();
+      }
+      try {
+        return (val as dynamic).toDate() as DateTime;
+      } catch (_) {}
+      return DateTime.now();
+    }
+
     return Announcement(
       id: docId,
       title: map['title'] ?? '',
       description: map['description'] ?? '',
       author: map['author'] ?? 'Unknown',
-      createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+      createdAt: parseDate(map['createdAt']),
       priority: map['priority'] ?? 'Info',
     );
   }

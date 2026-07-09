@@ -23,7 +23,7 @@ import '../../features/admin/presentation/screens/reports_screen.dart';
 import '../../features/admin/presentation/screens/settings_screen.dart';
 import '../../features/admin/presentation/screens/organizations_screen.dart';
 
-/// Smooth fade + slight upward-slide transition for all shell tab routes
+/// Smooth fade + slight upward-slide transition for all routes
 CustomTransitionPage<void> _fadePage({
   required GoRouterState state,
   required Widget child,
@@ -31,22 +31,22 @@ CustomTransitionPage<void> _fadePage({
   return CustomTransitionPage<void>(
     key: state.pageKey,
     child: child,
-    transitionDuration: const Duration(milliseconds: 300),
-    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionDuration: const Duration(milliseconds: 350),
+    reverseTransitionDuration: const Duration(milliseconds: 250),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       final fadeCurve = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeInOut,
+        curve: Curves.easeOut,
       );
       final slideCurve = CurvedAnimation(
         parent: animation,
-        curve: Curves.easeOutCubic,
+        curve: Curves.easeOutQuart,
       );
       return FadeTransition(
         opacity: fadeCurve,
         child: SlideTransition(
           position: Tween<Offset>(
-            begin: const Offset(0, 0.03), // subtle 3% upward drift
+            begin: const Offset(0, 0.02), // subtle 2% upward drift
             end: Offset.zero,
           ).animate(slideCurve),
           child: child,
@@ -71,31 +71,49 @@ final _appRouter = GoRouter(
     // Splash
     GoRoute(
       path: '/splash',
-      builder: (context, state) => const SplashScreen(),
+      pageBuilder: (context, state) => _fadePage(
+        state: state,
+        child: const SplashScreen(),
+      ),
     ),
 
     // Auth routes
     GoRoute(
       path: '/login',
-      builder: (context, state) => const ResponsiveLoginScreen(),
+      pageBuilder: (context, state) => _fadePage(
+        state: state,
+        child: const ResponsiveLoginScreen(),
+      ),
     ),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterScreen(),
+      pageBuilder: (context, state) => _fadePage(
+        state: state,
+        child: const RegisterScreen(),
+      ),
     ),
     GoRoute(
       path: '/forgot-password',
-      builder: (context, state) => const ForgotPasswordScreen(),
+      pageBuilder: (context, state) => _fadePage(
+        state: state,
+        child: const ForgotPasswordScreen(),
+      ),
     ),
     GoRoute(
       path: '/email-verification',
-      builder: (context, state) => const EmailVerificationScreen(),
+      pageBuilder: (context, state) => _fadePage(
+        state: state,
+        child: const EmailVerificationScreen(),
+      ),
     ),
     GoRoute(
       path: '/reset-password',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final oobCode = state.uri.queryParameters['oobCode'];
-        return ResetPasswordScreen(oobCode: oobCode);
+        return _fadePage(
+          state: state,
+          child: ResetPasswordScreen(oobCode: oobCode),
+        );
       },
     ),
 

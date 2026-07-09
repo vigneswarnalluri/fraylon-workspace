@@ -127,7 +127,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         style: const TextStyle(fontSize: 13, height: 1.5),
       ),
       confirmLabel: 'Close',
-      onConfirm: () => Navigator.pop(context),
+      onConfirm: () => Navigator.of(context, rootNavigator: true).pop(),
     );
   }
 

@@ -71,7 +71,7 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
                 assigneeId: selectedAssigneeId,
                 assigneeName: selectedAssigneeName,
               );
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: true).pop();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Task created successfully!')),
           );
@@ -187,10 +187,14 @@ class _TaskListScreenState extends ConsumerState<TaskListScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Due Date: ${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}',
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                  Expanded(
+                    child: Text(
+                      'Due Date: ${selectedDueDate.day}/${selectedDueDate.month}/${selectedDueDate.year}',
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   TextButton(
                     onPressed: () async {
                       final picked = await showDatePicker(

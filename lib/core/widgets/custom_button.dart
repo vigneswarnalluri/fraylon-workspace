@@ -73,6 +73,7 @@ class CustomButton extends StatelessWidget {
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             minimumSize: Size(width ?? double.infinity, height),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           ),
           child: child,
         );
@@ -87,6 +88,7 @@ class CustomButton extends StatelessWidget {
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             minimumSize: Size(width ?? double.infinity, height),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           ),
           child: child,
         );
@@ -101,6 +103,7 @@ class CustomButton extends StatelessWidget {
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             minimumSize: Size(width ?? double.infinity, height),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           ),
           child: child,
         );
@@ -119,6 +122,7 @@ class CustomButton extends StatelessWidget {
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
             minimumSize: Size(width ?? double.infinity, height),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           ),
           child: child,
         );
@@ -129,6 +133,7 @@ class CustomButton extends StatelessWidget {
           style: TextButton.styleFrom(
             minimumSize: Size(width ?? 80, height),
             shape: RoundedRectangleBorder(borderRadius: borderRadius),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
           ),
           child: child,
         );

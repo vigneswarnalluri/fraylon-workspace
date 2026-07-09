@@ -26,6 +26,7 @@ class CustomDropdown<T> extends StatelessWidget {
       initialValue: value,
       items: items,
       onChanged: onChanged,
+      isExpanded: true,
       icon: Icon(
         Icons.keyboard_arrow_down_rounded,
         color: theme.colorScheme.onSurfaceVariant,

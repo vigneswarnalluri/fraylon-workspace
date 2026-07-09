@@ -50,13 +50,37 @@ class CustomDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final borderRadius = BorderRadius.circular(12.0);
 
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: borderRadius),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 440),
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+    final mediaQuery = MediaQuery.of(context);
+    final sanitizedQuery = mediaQuery.copyWith(
+      viewInsets: EdgeInsets.only(
+        left: mediaQuery.viewInsets.left.clamp(0.0, double.infinity),
+        top: mediaQuery.viewInsets.top.clamp(0.0, double.infinity),
+        right: mediaQuery.viewInsets.right.clamp(0.0, double.infinity),
+        bottom: mediaQuery.viewInsets.bottom.clamp(0.0, double.infinity),
+      ),
+      viewPadding: EdgeInsets.only(
+        left: mediaQuery.viewPadding.left.clamp(0.0, double.infinity),
+        top: mediaQuery.viewPadding.top.clamp(0.0, double.infinity),
+        right: mediaQuery.viewPadding.right.clamp(0.0, double.infinity),
+        bottom: mediaQuery.viewPadding.bottom.clamp(0.0, double.infinity),
+      ),
+      padding: EdgeInsets.only(
+        left: mediaQuery.padding.left.clamp(0.0, double.infinity),
+        top: mediaQuery.padding.top.clamp(0.0, double.infinity),
+        right: mediaQuery.padding.right.clamp(0.0, double.infinity),
+        bottom: mediaQuery.padding.bottom.clamp(0.0, double.infinity),
+      ),
+    );
+
+    return MediaQuery(
+      data: sanitizedQuery,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: borderRadius),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -110,7 +134,9 @@ class CustomDialog extends StatelessWidget {
                     const SizedBox(width: 8),
                     CustomButton(
                       label: confirmLabel!,
-                      width: 100,
+                      width: (confirmLabel!.length * 8.0 + 32.0 > 100.0)
+                          ? (confirmLabel!.length * 8.0 + 32.0)
+                          : 100.0,
                       height: 38,
                       type: isDestructive ? CustomButtonType.accent : CustomButtonType.primary,
                       onPressed: onConfirm,
@@ -122,6 +148,7 @@ class CustomDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

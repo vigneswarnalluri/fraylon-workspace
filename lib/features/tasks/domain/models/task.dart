@@ -1,4 +1,16 @@
 
+DateTime _parseTaskDate(dynamic val) {
+  if (val == null) return DateTime.now();
+  if (val is DateTime) return val;
+  if (val is String) {
+    return DateTime.tryParse(val) ?? DateTime.now();
+  }
+  try {
+    return (val as dynamic).toDate() as DateTime;
+  } catch (_) {}
+  return DateTime.now();
+}
+
 class TaskComment {
   final String id;
   final String userName;
@@ -40,7 +52,7 @@ class TaskComment {
       id: map['id'] ?? '',
       userName: map['userName'] ?? '',
       text: map['text'] ?? '',
-      createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
+      createdAt: _parseTaskDate(map['createdAt']),
     );
   }
 }
@@ -68,7 +80,7 @@ class TaskHistoryEntry {
     return TaskHistoryEntry(
       id: map['id'] ?? '',
       action: map['action'] ?? '',
-      timestamp: DateTime.tryParse(map['timestamp'] ?? '') ?? DateTime.now(),
+      timestamp: _parseTaskDate(map['timestamp']),
     );
   }
 }
@@ -156,11 +168,11 @@ class Task {
       description: map['description'] ?? '',
       status: map['status'] ?? 'Todo',
       priority: map['priority'] ?? 'Medium',
-      dueDate: DateTime.tryParse(map['dueDate'] ?? '') ?? DateTime.now(),
+      dueDate: _parseTaskDate(map['dueDate']),
       comments: (map['comments'] as List?)?.map((x) => TaskComment.fromMap(x)).toList() ?? [],
       history: (map['history'] as List?)?.map((x) => TaskHistoryEntry.fromMap(x)).toList() ?? [],
-      createdAt: DateTime.tryParse(map['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(map['updatedAt'] ?? '') ?? DateTime.now(),
+      createdAt: _parseTaskDate(map['createdAt']),
+      updatedAt: _parseTaskDate(map['updatedAt']),
       assigneeId: map['assigneeId'],
       assigneeName: map['assigneeName'],
     );

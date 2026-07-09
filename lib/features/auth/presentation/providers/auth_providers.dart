@@ -53,8 +53,48 @@ final userProfileProvider = StreamProvider<UserProfile?>((ref) {
   if (uid == null) return Stream.value(null);
 
   final repository = ref.watch(userRepositoryProvider);
+  
+  // Asynchronously check and seed the profile if it doesn't exist yet
+  _ensureProfileExists(ref, uid);
+
   return repository.watchUserProfile(uid);
 });
+
+/// Ensures that a UserProfile document exists in Firestore for the given UID.
+/// If it doesn't exist (e.g. after a Google Sign-In Redirect), we seed it.
+Future<void> _ensureProfileExists(Ref ref, String uid) async {
+  try {
+    final userRepo = ref.read(userRepositoryProvider);
+    final authRepo = ref.read(authRepositoryProvider);
+    final existing = await userRepo.getUserProfile(uid);
+    if (existing == null) {
+      final now = DateTime.now();
+      final email = await authRepo.getCurrentUserEmail() ?? '';
+      final name = await authRepo.getCurrentUserDisplayName() ?? 'Google User';
+      
+      final profile = UserProfile(
+        uid: uid,
+        name: name.isNotEmpty ? name : 'Google User',
+        email: email,
+        role: 'Employee',
+        phone: '',
+        organizationId: 'org_fraylon',
+        departmentId: 'dept_engineering',
+        designation: 'Software Engineer',
+        createdAt: now,
+        lastLogin: now,
+        status: 'Active',
+        department: 'Engineering',
+        organization: 'Fraylon Technologies LLP',
+        employeeId: 'EMP_${now.millisecondsSinceEpoch.toString().substring(7)}',
+        joinedDate: now,
+      );
+      await userRepo.createUser(profile);
+    }
+  } catch (e) {
+    // Suppress seeding errors to avoid breaking the UI flow
+  }
+}
 
 /// Resolves the current user's role.
 final userRoleProvider = Provider<String>((ref) {

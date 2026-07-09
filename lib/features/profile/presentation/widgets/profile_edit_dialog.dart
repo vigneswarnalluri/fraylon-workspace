@@ -49,7 +49,7 @@ class ProfileEditDialog {
             phone: phoneController.text.trim(),
           );
           onConfirm(updated);
-          Navigator.pop(context);
+          Navigator.of(context, rootNavigator: true).pop();
         }
       },
       content: StatefulBuilder(

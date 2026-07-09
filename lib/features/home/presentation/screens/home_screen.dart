@@ -9,10 +9,14 @@ import '../../../../core/widgets/custom_chart.dart';
 import '../../../../core/widgets/custom_dialog.dart';
 import '../../../../core/widgets/custom_search_bar.dart';
 import '../../../../core/widgets/quick_actions.dart';
+import '../../../../core/widgets/profile_avatar.dart';
 import '../../../announcements/presentation/providers/announcement_providers.dart';
 import '../../../notifications/presentation/providers/notification_providers.dart';
 import '../../../tasks/presentation/providers/task_providers.dart';
 import '../../../tasks/domain/models/task.dart';
+import '../../../profile/presentation/providers/profile_providers.dart';
+import '../../../profile/domain/models/user_profile.dart';
+import '../../../../core/services/permission_service.dart';
 
 // ---------------------------------------------------------------------------
 // Dashboard Models & State
@@ -299,6 +303,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isDark = theme.brightness == Brightness.dark;
     final state = ref.watch(dashboardProvider);
     final userNameAsync = ref.watch(userDisplayNameProvider);
+    final userProfileAsync = ref.watch(userProfileProvider);
+    final userProfile = userProfileAsync.valueOrNull;
+    final permissionService = ref.watch(permissionServiceProvider);
+    
+    final canCreateAnnouncements = userProfile != null && permissionService.canCreateAnnouncements(userProfile);
     final announcementsAsync = ref.watch(announcementsStreamProvider);
     final unreadNotificationsCount = ref.watch(unreadNotificationsCountProvider);
 
@@ -396,13 +405,206 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             t.dueDate.isBefore(now.add(const Duration(days: 7))))
         .length;
 
-    final welcomeBanner = Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    final statusDropdown = PopupMenuButton<String>(
+      onSelected: (newStatus) {
+        final UserProfile currentProfile = userProfile ?? ref.read(profileProvider);
+        final updated = currentProfile.copyWith(status: newStatus);
+        ref.read(profileProvider.notifier).updateProfile(updated);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Status updated to $newStatus.'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      },
+      itemBuilder: (context) => [
+        _buildStatusMenuItem('Active', const Color(0xFF10B981)),
+        _buildStatusMenuItem('Away', const Color(0xFFF59E0B)),
+        _buildStatusMenuItem('Do Not Disturb', const Color(0xFFEF4444)),
+        _buildStatusMenuItem('In a Meeting', const Color(0xFF8B5CF6)),
+      ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: isDark
+              ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
+              : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.15),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 7,
+              height: 7,
+              decoration: BoxDecoration(
+                color: _getStatusColor(userProfile?.status ?? 'Active'),
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              (userProfile?.status == null || userProfile!.status.isEmpty) ? 'Active' : userProfile.status,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 16,
+              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    final notificationsBell = Stack(
+      clipBehavior: Clip.none,
       children: [
-        Expanded(
-          child: Column(
+        IconButton(
+          icon: Icon(
+            unreadNotificationsCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
+            size: 22,
+          ),
+          onPressed: () {
+            context.go('/notifications');
+          },
+        ),
+        if (unreadNotificationsCount > 0)
+          Positioned(
+            right: 6,
+            top: 6,
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.error,
+                shape: BoxShape.circle,
+              ),
+              constraints: const BoxConstraints(
+                minWidth: 14,
+                minHeight: 14,
+              ),
+              child: Text(
+                '$unreadNotificationsCount',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    final datePill = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark
+            ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        _formatCurrentDate(),
+        style: theme.textTheme.labelMedium?.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
+
+    final initials = userProfile?.name != null && userProfile!.name.isNotEmpty
+        ? userProfile.name.split(' ').map((e) => e[0]).take(2).join()
+        : 'U';
+
+    final profileAvatarButton = MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => context.go('/profile'),
+        child: ProfileAvatar(
+          imageUrl: userProfile?.imageUrl,
+          initials: initials,
+          size: 32,
+          showStatus: false,
+        ),
+      ),
+    );
+
+    final actionGroup = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        profileAvatarButton,
+        const SizedBox(width: 4),
+        notificationsBell,
+      ],
+    );
+
+    final welcomeBanner = isDesktop
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      greeting,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Today\'s summary: $pendingTasks pending tasks and $deadlinesCount deadlines.',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Row(
+                children: [
+                  actionGroup,
+                  const SizedBox(width: 8),
+                  statusDropdown,
+                  const SizedBox(width: 8),
+                  datePill,
+                ],
+              ),
+            ],
+          )
+        : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  actionGroup,
+                  Row(
+                    children: [
+                      datePill,
+                      const SizedBox(width: 8),
+                      statusDropdown,
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
               Text(
                 greeting,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -420,73 +622,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
               ),
             ],
-          ),
-        ),
-        Row(
-          children: [
-            // Notifications Bell with Badge
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    unreadNotificationsCount > 0 ? Icons.notifications_active_rounded : Icons.notifications_none_rounded,
-                    size: 22,
-                  ),
-                  onPressed: () {
-                    context.go('/notifications');
-                  },
-                ),
-                if (unreadNotificationsCount > 0)
-                  Positioned(
-                    right: 6,
-                    top: 6,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.error,
-                        shape: BoxShape.circle,
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 14,
-                        minHeight: 14,
-                      ),
-                      child: Text(
-                        '$unreadNotificationsCount',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(width: 8),
-            // Current Date Pill
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
-                    : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _formatCurrentDate(),
-                style: theme.textTheme.labelMedium?.copyWith(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
+          );
 
     // Quick Stats Grid Section
     final statsGrid = LayoutBuilder(
@@ -929,7 +1065,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               onTap: () => _showInviteMemberDialog(context),
             ),
             QuickActionItem(
-              label: 'Post Update',
+              label: canCreateAnnouncements ? 'Post Update' : 'Announcements',
               icon: Icons.campaign_rounded,
               color: const Color(0xFF22C7D6),
               onTap: () => context.go('/announcements'),
@@ -1057,33 +1193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF6B4EE6), Color(0xFF22C7D6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF6B4EE6).withValues(alpha: 0.35),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            context.go('/assistant');
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          highlightElevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: const Icon(Icons.bolt_rounded, color: Colors.white),
-        ),
-      ),
+      floatingActionButton: const AnimatedFAB(),
     );
   }
 
@@ -1456,6 +1566,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ],
     );
   }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Active':
+        return const Color(0xFF10B981);
+      case 'Away':
+        return const Color(0xFFF59E0B);
+      case 'Do Not Disturb':
+        return const Color(0xFFEF4444);
+      case 'In a Meeting':
+        return const Color(0xFF8B5CF6);
+      default:
+        return const Color(0xFF64748B);
+    }
+  }
+
+  PopupMenuItem<String> _buildStatusMenuItem(String status, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    return PopupMenuItem<String>(
+      value: status,
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            status,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 String _formatCurrentDate() {
@@ -1493,5 +1647,100 @@ String _monthName(int month) {
     case 11: return 'Nov';
     case 12: return 'Dec';
     default: return '';
+  }
+}
+
+class AnimatedFAB extends StatefulWidget {
+  const AnimatedFAB({super.key});
+
+  @override
+  State<AnimatedFAB> createState() => _AnimatedFABState();
+}
+
+class _AnimatedFABState extends State<AnimatedFAB> with SingleTickerProviderStateMixin {
+  bool _hovered = false;
+  bool _pressed = false;
+  late AnimationController _pulseController;
+  late Animation<double> _pulseAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2000),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTap: () {
+          context.go('/assistant');
+        },
+        child: AnimatedScale(
+          scale: _pressed ? 0.94 : (_hovered ? 1.08 : 1.0),
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeOutCubic,
+          child: AnimatedBuilder(
+            animation: _pulseAnimation,
+            builder: (context, child) {
+              final pulseValue = _pulseAnimation.value;
+              final blurRadius = _hovered ? 16.0 : (8.0 + pulseValue * 6.0);
+              final spreadRadius = _hovered ? 2.0 : (pulseValue * 1.5);
+              final glowColor = const Color(0xFF3B82F6).withValues(
+                alpha: _hovered ? 0.45 : (0.15 + pulseValue * 0.15),
+              );
+
+              return Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6366F1), Color(0xFF3B82F6)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: glowColor,
+                      blurRadius: blurRadius,
+                      spreadRadius: spreadRadius,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: child,
+              );
+            },
+            child: const Icon(
+              Icons.bolt_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

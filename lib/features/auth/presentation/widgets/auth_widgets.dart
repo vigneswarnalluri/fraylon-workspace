@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../../core/constants/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 // ---------------------------------------------------------------------------
 // Google Logo Vector Painter
@@ -66,12 +67,10 @@ class GoogleLogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return SvgPicture.asset(
+      'assets/images/google_logo.svg',
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: const GoogleLogoPainter(),
-      ),
     );
   }
 }
@@ -161,6 +160,7 @@ class GradientAuthButton extends StatefulWidget {
 
 class _GradientAuthButtonState extends State<GradientAuthButton> {
   bool _hovered = false;
+  bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -169,67 +169,70 @@ class _GradientAuthButtonState extends State<GradientAuthButton> {
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedOpacity(
-        opacity: isDisabled ? 0.6 : 1.0,
-        duration: const Duration(milliseconds: 200),
-        child: Container(
-          height: 48,
-          decoration: BoxDecoration(
-            gradient: isDisabled
-                ? null
-                : LinearGradient(
-                    colors: _hovered
-                        ? [AppColors.primary, const Color(0xFF1D4ED8)]
-                        : [AppColors.primary, const Color(0xFF3B82F6)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-            color: isDisabled ? Colors.grey.shade400 : null,
-            borderRadius: BorderRadius.circular(8),
-            boxShadow: isDisabled
-                ? null
-                : [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapUp: (_) => setState(() => _pressed = false),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTap: isDisabled ? null : widget.onPressed,
+        child: AnimatedScale(
+          scale: isDisabled ? 1.0 : (_pressed ? 0.97 : (_hovered ? 1.02 : 1.0)),
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: isDisabled
+                  ? null
+                  : LinearGradient(
+                      colors: _hovered
+                          ? [const Color(0xFF2563EB), const Color(0xFF1D4ED8)]
+                          : [AppColors.primary, const Color(0xFF2563EB)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: isDisabled ? null : widget.onPressed,
-              borderRadius: BorderRadius.circular(8),
-              child: widget.isLoading
-                  ? const Center(
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
+              color: isDisabled ? Colors.grey.shade400 : null,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: isDisabled
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: const Color(0xFF3B82F6).withValues(alpha: _hovered ? 0.35 : 0.25),
+                        blurRadius: _hovered ? 16 : 8,
+                        spreadRadius: _hovered ? 2 : 0,
+                        offset: Offset(0, _hovered ? 5 : 3),
+                      ),
+                    ],
+            ),
+            child: widget.isLoading
+                ? const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2.5,
+                      ),
+                    ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (widget.icon != null) ...[
+                        Icon(widget.icon, color: Colors.white, size: 18),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(
+                        widget.label,
+                        style: const TextStyle(
                           color: Colors.white,
-                          strokeWidth: 2,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
+                          letterSpacing: 0.3,
                         ),
                       ),
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (widget.icon != null) ...[
-                          Icon(widget.icon, color: Colors.white, size: 18),
-                          const SizedBox(width: 8),
-                        ],
-                        Text(
-                          widget.label,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
+                    ],
+                  ),
           ),
         ),
       ),
@@ -257,59 +260,78 @@ class GoogleSignInButton extends StatefulWidget {
 
 class _GoogleSignInButtonState extends State<GoogleSignInButton> {
   bool _isHovered = false;
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+    final isDisabled = widget.onPressed == null || widget.isLoading;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
-      child: SizedBox(
-        height: 48,
-        child: OutlinedButton(
-          onPressed: widget.isLoading ? null : widget.onPressed,
-          style: OutlinedButton.styleFrom(
-            side: BorderSide(
-              color: _isHovered
-                  ? theme.colorScheme.primary
-                  : (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0)),
-              width: 1.5,
+      child: GestureDetector(
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        onTap: isDisabled ? null : widget.onPressed,
+        child: AnimatedScale(
+          scale: isDisabled ? 1.0 : (_isPressed ? 0.97 : (_isHovered ? 1.02 : 1.0)),
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOutCubic,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            height: 48,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? (_isHovered ? const Color(0xFF334155) : const Color(0xFF1E293B))
+                  : (_isHovered ? const Color(0xFFF8FAFC) : Colors.white),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: _isHovered
+                    ? theme.colorScheme.primary
+                    : (isDark ? const Color(0xFF475569) : const Color(0xFFE2E8F0)),
+                width: 1.5,
+              ),
+              boxShadow: isDisabled
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: _isHovered ? 0.08 : 0.03),
+                        blurRadius: _isHovered ? 12 : 6,
+                        offset: Offset(0, _isHovered ? 4 : 2),
+                      ),
+                    ],
             ),
-            backgroundColor: isDark
-                ? const Color(0xFF1E293B)
-                : Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            elevation: 0,
-          ),
-          child: widget.isLoading
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: theme.colorScheme.primary,
-                  ),
-                )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const GoogleLogoWidget(size: 18),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Continue with Google',
-                      style: TextStyle(
-                        color: isDark ? Colors.white : AppColors.dark,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+            child: widget.isLoading
+                ? Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                  ],
-                ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const GoogleLogoWidget(size: 18),
+                      const SizedBox(width: 10),
+                      Text(
+                        'Continue with Google',
+                        style: TextStyle(
+                          color: isDark ? Colors.white : AppColors.dark,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );

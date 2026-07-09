@@ -190,31 +190,6 @@ class _NotificationCenterScreenState extends ConsumerState<NotificationCenterScr
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.add_alert_rounded, size: 16),
-                      label: const Text('Simulate Notification', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade50,
-                        foregroundColor: AppColors.error,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-                        ),
-                      ),
-                      onPressed: () {
-                        ref.read(notificationActionControllerProvider.notifier).simulateNotification();
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Simulated notification arrived!'),
-                            duration: Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                    ),
                   ],
                 ),
               ),
@@ -445,32 +420,6 @@ class _NotificationCenterScreenState extends ConsumerState<NotificationCenterScr
                 _buildCountOverviewRow('System Warnings', sysCount, AppColors.warning),
               ],
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // Developer simulator trigger button
-          ElevatedButton.icon(
-            icon: const Icon(Icons.add_alert_rounded, size: 16),
-            label: const Text('Simulate Notification', style: TextStyle(fontSize: 12)),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade50,
-              foregroundColor: AppColors.error,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-                side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-              ),
-            ),
-            onPressed: () {
-              ref.read(notificationActionControllerProvider.notifier).simulateNotification();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Simulated notification arrived!'),
-                  duration: Duration(seconds: 1),
-                ),
-              );
-            },
           ),
         ],
       );

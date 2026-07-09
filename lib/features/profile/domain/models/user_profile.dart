@@ -124,9 +124,23 @@ class UserProfile {
 
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     final now = DateTime.now();
-    final created = DateTime.tryParse(map['createdAt'] ?? map['joinedDate'] ?? '') ?? now;
-    final lastLog = DateTime.tryParse(map['lastLogin'] ?? '') ?? now;
+    
+    DateTime parseDate(dynamic val) {
+      if (val == null) return now;
+      if (val is DateTime) return val;
+      if (val is String) {
+        return DateTime.tryParse(val) ?? now;
+      }
+      try {
+        return (val as dynamic).toDate() as DateTime;
+      } catch (_) {}
+      return now;
+    }
+
+    final created = parseDate(map['createdAt'] ?? map['joinedDate']);
+    final lastLog = parseDate(map['lastLogin']);
     final roleVal = map['role'] ?? 'Employee';
+    
     return UserProfile(
       uid: map['uid'] ?? map['id'] ?? '',
       name: map['name'] ?? '',

@@ -211,6 +211,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    // Redirect if already authenticated or when auth state changes to authenticated
+    final currentUserId = ref.watch(authStateProvider).valueOrNull;
+    if (currentUserId != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          context.go('/');
+        }
+      });
+    }
+
+    ref.listen(authStateProvider, (previous, next) {
+      if (!mounted) return;
+      next.whenData((userId) {
+        if (userId != null) {
+          context.go('/');
+        }
+      });
+    });
+
     ref.listen(authControllerProvider, (_, next) {
       if (!mounted) return;
       if (next.errorMessage != null) {
@@ -419,7 +438,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         // Google Button
         GoogleSignInButton(
           onPressed: authState.isLoading ? null : _signInWithGoogle,
-          isLoading: false,
+          isLoading: authState.isLoading,
         ),
         const SizedBox(height: 28),
 
