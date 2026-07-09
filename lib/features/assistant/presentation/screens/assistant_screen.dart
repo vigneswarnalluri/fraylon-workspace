@@ -61,6 +61,37 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
 
+  /// Parses simple inline markdown (**bold**, *italic*) into a [RichText] widget.
+  Widget _buildMarkdownText(String text, TextStyle baseStyle) {
+    final spans = <TextSpan>[];
+    // Regex: **bold**, *italic*
+    final pattern = RegExp(r'\*\*(.+?)\*\*|\*(.+?)\*');
+    int lastEnd = 0;
+    for (final match in pattern.allMatches(text)) {
+      if (match.start > lastEnd) {
+        spans.add(TextSpan(text: text.substring(lastEnd, match.start), style: baseStyle));
+      }
+      if (match.group(1) != null) {
+        // **bold**
+        spans.add(TextSpan(
+          text: match.group(1),
+          style: baseStyle.copyWith(fontWeight: FontWeight.bold),
+        ));
+      } else if (match.group(2) != null) {
+        // *italic*
+        spans.add(TextSpan(
+          text: match.group(2),
+          style: baseStyle.copyWith(fontStyle: FontStyle.italic),
+        ));
+      }
+      lastEnd = match.end;
+    }
+    if (lastEnd < text.length) {
+      spans.add(TextSpan(text: text.substring(lastEnd), style: baseStyle));
+    }
+    return RichText(text: TextSpan(children: spans));
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -174,13 +205,13 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                     width: 1,
                   ),
                 ),
-                child: Text(
+                child: _buildMarkdownText(
                   msg.content,
-                  style: theme.textTheme.bodyMedium?.copyWith(
+                  theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 13,
                     height: 1.4,
                     color: theme.colorScheme.onSurface,
-                  ),
+                  ) ?? const TextStyle(fontSize: 13),
                 ),
               ),
               if (msg.isTaskSnippet && msg.taskTitle != null) ...[
@@ -344,20 +375,24 @@ class _AssistantScreenState extends ConsumerState<AssistantScreen> {
                           width: 1,
                         ),
                       ),
-                      child: TextField(
-                        controller: _inputController,
-                        onSubmitted: (_) => _handleSend(),
-                        style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
-                        decoration: InputDecoration(
-                          hintText: 'Ask Fraylon AI to create a task, summarize, or search...',
-                          hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                            fontSize: 12.5,
+                      child: Center(
+                        child: TextField(
+                          controller: _inputController,
+                          onSubmitted: (_) => _handleSend(),
+                          style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: InputDecoration(
+                            hintText: 'Ask Fraylon AI to create a task, summarize, or search...',
+                            hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                              fontSize: 12.5,
+                            ),
+                            border: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            isCollapsed: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 14),
                           ),
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                         ),
                       ),
                     ),

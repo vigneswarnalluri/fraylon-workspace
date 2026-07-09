@@ -7,6 +7,8 @@ import '../../../tasks/presentation/widgets/task_details_sheet.dart';
 import '../../../../core/widgets/custom_card.dart';
 import '../../../../core/widgets/custom_dialog.dart';
 import '../../../../core/widgets/custom_dropdown.dart';
+import '../../../../core/services/permission_service.dart';
+import '../../../profile/presentation/providers/profile_providers.dart';
 
 class CalendarScreen extends ConsumerStatefulWidget {
   const CalendarScreen({super.key});
@@ -88,6 +90,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth > 960;
 
+    final userProfile = ref.watch(profileProvider);
+    final permissionService = ref.watch(permissionServiceProvider);
+    final canCreateTasks = permissionService.canCreateTasks(userProfile);
+
     return Scaffold(
       body: SafeArea(
         child: tasksAsync.when(
@@ -118,15 +124,16 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
                     ],
                   ),
                 ),
-                IconButton.filled(
-                  icon: const Icon(Icons.add_rounded, size: 20),
-                  style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primary,
-                    foregroundColor: theme.colorScheme.onPrimary,
+                if (canCreateTasks)
+                  IconButton.filled(
+                    icon: const Icon(Icons.add_rounded, size: 20),
+                    style: IconButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primary,
+                      foregroundColor: theme.colorScheme.onPrimary,
+                    ),
+                    tooltip: 'Create New Task',
+                    onPressed: () => _showCreateTaskDialog(context, ref),
                   ),
-                  tooltip: 'Create New Task',
-                  onPressed: () => _showCreateTaskDialog(context, ref),
-                ),
               ],
             );
 

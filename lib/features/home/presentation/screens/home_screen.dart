@@ -308,6 +308,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final permissionService = ref.watch(permissionServiceProvider);
     
     final canCreateAnnouncements = userProfile != null && permissionService.canCreateAnnouncements(userProfile);
+    final canCreateTasks = userProfile != null && permissionService.canCreateTasks(userProfile);
     final announcementsAsync = ref.watch(announcementsStreamProvider);
     final unreadNotificationsCount = ref.watch(unreadNotificationsCountProvider);
 
@@ -1052,12 +1053,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         QuickActions(
           crossAxisCount: isDesktop ? 2 : 3,
           actions: [
-            QuickActionItem(
-              label: 'New Task',
-              icon: Icons.add_task_rounded,
-              color: theme.colorScheme.primary,
-              onTap: () => _showAddTaskDialog(context),
-            ),
+            if (canCreateTasks)
+              QuickActionItem(
+                label: 'New Task',
+                icon: Icons.add_task_rounded,
+                color: theme.colorScheme.primary,
+                onTap: () => _showAddTaskDialog(context),
+              )
+            else
+              QuickActionItem(
+                label: 'My Tasks',
+                icon: Icons.task_alt_rounded,
+                color: theme.colorScheme.primary,
+                onTap: () => context.go('/tasks'),
+              ),
             QuickActionItem(
               label: 'Invite Colleague',
               icon: Icons.person_add_alt_1_rounded,

@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../tasks/presentation/providers/task_providers.dart';
 import '../../../announcements/presentation/providers/announcement_providers.dart';
+import '../../../auth/presentation/providers/auth_providers.dart';
+import '../../../../core/services/permission_service.dart';
 import '../../domain/models/chat_message.dart';
 
 class AssistantNotifier extends StateNotifier<List<ChatMessage>> {
@@ -123,13 +125,29 @@ class AssistantNotifier extends StateNotifier<List<ChatMessage>> {
       taskText = taskText.replaceAll(RegExp(r'^(?:to|for|about|that)\s+', caseSensitive: false), '').trim();
       if (taskText.isEmpty) taskText = 'New Task';
 
-      // programmatically execute task creation in database!
+      // Check permission — Employees cannot create tasks.
+      final userProfile = _ref.read(userProfileProvider).valueOrNull;
+      final permissionService = _ref.read(permissionServiceProvider);
+      if (userProfile == null || !permissionService.canCreateTasks(userProfile)) {
+        return ChatMessage(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          content: 'Sorry, you don\'t have permission to create tasks. Please ask your Manager to assign tasks to you.',
+          sender: MessageSender.ai,
+          timestamp: DateTime.now(),
+          suggestedActions: ['Summarize today\'s tasks', 'Workspace activity status'],
+        );
+      }
+
+      // programmatically execute task creation in database,
+      // auto-assigning to the creator so it appears in their task list.
       _ref.read(taskActionControllerProvider.notifier).createTask(
             title: taskText,
             description: 'Created by Fraylon AI from natural language.',
             status: 'Todo',
             priority: priority,
             dueDate: dueDate,
+            assigneeId: userProfile.uid,
+            assigneeName: userProfile.name,
           );
 
       return ChatMessage(

@@ -8,7 +8,7 @@ import '../../../../core/widgets/custom_chip.dart';
 import '../../../profile/presentation/providers/profile_providers.dart';
 import '../../../../core/services/permission_service.dart';
 
-class TaskCard extends ConsumerWidget {
+class TaskCard extends ConsumerStatefulWidget {
   final Task task;
   final VoidCallback onTap;
   final bool showStatus;
@@ -21,7 +21,25 @@ class TaskCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends ConsumerState<TaskCard> {
+  /// Optimistic override: non-null while we're waiting for Firestore confirmation.
+  bool? _pendingCompleted;
+
+  @override
+  void didUpdateWidget(TaskCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Once the stream confirms the new status, clear our local override.
+    if (_pendingCompleted != null &&
+        widget.task.status != oldWidget.task.status) {
+      _pendingCompleted = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -29,7 +47,8 @@ class TaskCard extends ConsumerWidget {
     final permissionService = ref.watch(permissionServiceProvider);
     final canDelete = permissionService.canDeleteTasks(userProfile);
 
-    final isCompleted = task.status == 'Completed';
+    // Use local optimistic value if pending, otherwise use authoritative stream value.
+    final isCompleted = _pendingCompleted ?? (widget.task.status == 'Completed');
 
     // Build the Card Widget
     final cardWidget = CustomCard(
@@ -39,7 +58,7 @@ class TaskCard extends ConsumerWidget {
               ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.1)
               : Colors.grey.shade100)
           : null,
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -49,10 +68,21 @@ class TaskCard extends ConsumerWidget {
               // Fast Quick Status Checkbox
               InkWell(
                 onTap: () {
-                  final nextStatus = isCompleted ? 'Todo' : 'Completed';
+                  final nextIsCompleted = !isCompleted;
+                  final nextStatus = nextIsCompleted ? 'Completed' : 'Todo';
+
+                  // Apply optimistic update immediately
+                  setState(() => _pendingCompleted = nextIsCompleted);
+
                   ref
                       .read(taskActionControllerProvider.notifier)
-                      .changeTaskStatus(task, nextStatus);
+                      .changeTaskStatus(widget.task, nextStatus)
+                      .then((success) {
+                    // If the operation failed, revert the optimistic state
+                    if (!success && mounted) {
+                      setState(() => _pendingCompleted = null);
+                    }
+                  });
 
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -60,17 +90,17 @@ class TaskCard extends ConsumerWidget {
                       content: Row(
                         children: [
                           Icon(
-                            nextStatus == 'Completed'
+                            nextIsCompleted
                                 ? Icons.check_circle_rounded
                                 : Icons.radio_button_unchecked_rounded,
-                            color: nextStatus == 'Completed'
+                            color: nextIsCompleted
                                 ? const Color(0xFF10B981)
                                 : Colors.white,
                             size: 18,
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            nextStatus == 'Completed'
+                            nextIsCompleted
                                 ? 'Task completed'
                                 : 'Task marked todo',
                             style: const TextStyle(
@@ -85,9 +115,19 @@ class TaskCard extends ConsumerWidget {
                         label: 'Undo',
                         textColor: theme.colorScheme.primaryContainer,
                         onPressed: () {
+                          final undoIsCompleted = !nextIsCompleted;
+                          setState(() => _pendingCompleted = undoIsCompleted);
                           ref
                               .read(taskActionControllerProvider.notifier)
-                              .changeTaskStatus(task, isCompleted ? 'Completed' : 'Todo');
+                              .changeTaskStatus(
+                                widget.task,
+                                undoIsCompleted ? 'Completed' : 'Todo',
+                              )
+                              .then((success) {
+                            if (!success && mounted) {
+                              setState(() => _pendingCompleted = null);
+                            }
+                          });
                         },
                       ),
                       behavior: SnackBarBehavior.floating,
@@ -123,7 +163,7 @@ class TaskCard extends ConsumerWidget {
               // Task Title
               Expanded(
                 child: Text(
-                  task.title,
+                  widget.task.title,
                   style: theme.textTheme.labelMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
@@ -133,11 +173,11 @@ class TaskCard extends ConsumerWidget {
                   ),
                 ),
               ),
-              if (showStatus) ...[
+              if (widget.showStatus) ...[
                 const SizedBox(width: 8),
                 // Status Pill
                 StatusPill(
-                  type: _mapStatusToType(task.status),
+                  type: _mapStatusToType(widget.task.status),
                 ),
               ],
             ],
@@ -147,7 +187,7 @@ class TaskCard extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(left: 28.0),
             child: Text(
-              task.description.isEmpty ? 'No description' : task.description,
+              widget.task.description.isEmpty ? 'No description' : widget.task.description,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
                 fontSize: 11.5,
@@ -166,10 +206,10 @@ class TaskCard extends ConsumerWidget {
                 Row(
                   children: [
                     // Priority tag
-                    _buildPriorityIndicator(theme, task.priority),
+                    _buildPriorityIndicator(theme, widget.task.priority),
                     const SizedBox(width: 8),
                     // Comments indicator count
-                    if (task.comments.isNotEmpty) ...[
+                    if (widget.task.comments.isNotEmpty) ...[
                       Icon(
                         Icons.mode_comment_outlined,
                         size: 11,
@@ -177,7 +217,7 @@ class TaskCard extends ConsumerWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${task.comments.length}',
+                        '${widget.task.comments.length}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
@@ -185,7 +225,7 @@ class TaskCard extends ConsumerWidget {
                       ),
                     ],
                     // Assignee indicator
-                    if (task.assigneeName != null) ...[
+                    if (widget.task.assigneeName != null) ...[
                       const SizedBox(width: 8),
                       Icon(
                         Icons.person_outline_rounded,
@@ -194,7 +234,7 @@ class TaskCard extends ConsumerWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        task.assigneeName!,
+                        widget.task.assigneeName!,
                         style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 10,
                           color: theme.colorScheme.onSurfaceVariant,
@@ -209,19 +249,19 @@ class TaskCard extends ConsumerWidget {
                     Icon(
                       Icons.calendar_today_rounded,
                       size: 11,
-                      color: _isOverdue(task.dueDate) && !isCompleted
+                      color: _isOverdue(widget.task.dueDate) && !isCompleted
                           ? theme.colorScheme.error
                           : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _formatDueDate(task.dueDate),
+                      _formatDueDate(widget.task.dueDate),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 10,
-                        fontWeight: _isOverdue(task.dueDate) && !isCompleted
+                        fontWeight: _isOverdue(widget.task.dueDate) && !isCompleted
                             ? FontWeight.bold
                             : FontWeight.normal,
-                        color: _isOverdue(task.dueDate) && !isCompleted
+                        color: _isOverdue(widget.task.dueDate) && !isCompleted
                             ? theme.colorScheme.error
                             : theme.colorScheme.onSurfaceVariant,
                       ),
@@ -237,7 +277,7 @@ class TaskCard extends ConsumerWidget {
 
     // Mobile Swipe Gesture Actions Wrapper
     return Dismissible(
-      key: Key('swipe_${task.id}'),
+      key: Key('swipe_${widget.task.id}'),
       direction: canDelete ? DismissDirection.horizontal : DismissDirection.startToEnd,
       onDismissed: (direction) {
         if (direction == DismissDirection.startToEnd) {
@@ -245,7 +285,7 @@ class TaskCard extends ConsumerWidget {
           final nextStatus = isCompleted ? 'Todo' : 'Completed';
           ref
               .read(taskActionControllerProvider.notifier)
-              .changeTaskStatus(task, nextStatus);
+              .changeTaskStatus(widget.task, nextStatus);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(isCompleted ? 'Marked task as Todo' : 'Task Completed!'),
@@ -254,19 +294,19 @@ class TaskCard extends ConsumerWidget {
           );
         } else if (canDelete) {
           // Swipe Left: Delete Task
-          ref.read(taskActionControllerProvider.notifier).deleteTask(task.id);
+          ref.read(taskActionControllerProvider.notifier).deleteTask(widget.task.id);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Task "${task.title}" deleted'),
+              content: Text('Task "${widget.task.title}" deleted'),
               action: SnackBarAction(
                 label: 'Undo',
                 onPressed: () {
                   ref.read(taskActionControllerProvider.notifier).createTask(
-                        title: task.title,
-                        description: task.description,
-                        status: task.status,
-                        priority: task.priority,
-                        dueDate: task.dueDate,
+                        title: widget.task.title,
+                        description: widget.task.description,
+                        status: widget.task.status,
+                        priority: widget.task.priority,
+                        dueDate: widget.task.dueDate,
                       );
                 },
               ),

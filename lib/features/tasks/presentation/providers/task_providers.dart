@@ -23,10 +23,28 @@ final taskRepositoryProvider = Provider<TaskRepository>((ref) {
   }
 });
 
-// Stream provider to watch tasks reactively
+// Stream provider to watch tasks reactively, filtered by role.
+// - Employee: only sees tasks explicitly assigned to their UID.
+// - Manager / Admin / Super Admin: sees all tasks.
 final tasksStreamProvider = StreamProvider<List<Task>>((ref) {
   final repository = ref.watch(taskRepositoryProvider);
-  return repository.watchTasks();
+  final userProfileAsync = ref.watch(userProfileProvider);
+
+  return repository.watchTasks().map((tasks) {
+    final profile = userProfileAsync.valueOrNull;
+
+    // If profile not yet loaded, show nothing to avoid leaking data.
+    if (profile == null) return <Task>[];
+
+    const employeeRoles = {'Employee'};
+    if (employeeRoles.contains(profile.role)) {
+      // Employees only see tasks assigned specifically to them.
+      return tasks.where((t) => t.assigneeId == profile.uid).toList();
+    }
+
+    // Managers and above see all tasks.
+    return tasks;
+  });
 });
 
 // ---------------------------------------------------------------------------
